@@ -1,0 +1,172 @@
+import Project from '../models/Project.js';
+import Ticket from '../models/Ticket.js';
+import Note from '../models/Note.js';
+import User from '../models/User.js';
+
+const updateHistory = (ticket, operation) => {
+  const date = new Date();
+  const currentDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000).toISOString();
+
+  const newHistory = {
+    title: ticket.title,
+    description: ticket.description,
+    changedDate: currentDate,
+    assigned: ticket.assigned,
+    assignedName: ticket.assignedName,
+    status: ticket.status,
+    category: ticket.category,
+    project: ticket.project,
+    operation: operation,
+  };
+
+  ticket.history.push(newHistory);
+};
+
+//CREATE
+
+export const createTicket = async (req, res) => {
+  try {
+    const { title, description, submitter, assigned, assignedName, category, projectId } = req.body;
+
+    const project = await Project.findById(projectId);
+    // const date = new Date();
+    const currentDate = new Date().toISOString();
+
+    const newTicket = new Ticket({
+      title,
+      description,
+      submitter,
+      submittedDate: currentDate,
+      assigned,
+      assignedName,
+      category,
+      notes: [],
+      status: 'OPEN',
+      history: [],
+      project: projectId,
+    });
+
+    // const assignedUser = await User.findById(assigned);
+    console.log(newTicket._id);
+    await Project.findByIdAndUpdate(
+      projectId,
+      {
+        $push: { tickets: newTicket._id },
+      },
+      { new: true }
+    );
+
+    await User.findByIdAndUpdate(assigned, { $push: { tickets: newTicket._id } });
+
+    // const assignedNames = assignedUsers.map(({ firstName, lastName }) => {
+    //   return firstName + ' ' + lastName;
+    // });
+
+    // newTicket.assigned = assignedNames;
+    updateHistory(newTicket, 'Ticket Creation');
+
+    await newTicket.save();
+
+    res.status(201).json(newTicket._id);
+  } catch (err) {
+    res.status(409).json({ message: err.message });
+  }
+};
+
+//READ
+
+export const getTicket = async (req, res) => {
+  try {
+    const { ticketId } = req.params;
+    const ticket = await Ticket.findById(ticketId);
+    res.status(200).json(ticket);
+  } catch (err) {
+    res.status(404).json({ message: err.message });
+  }
+};
+
+export const getAllTickets = async (req, res) => {
+  try {
+    const tickets = await Ticket.find({});
+    res.status(200).json(tickets);
+  } catch (err) {
+    res.status(404).json({ message: err.message });
+  }
+};
+
+export const getNotes = async (req, res) => {
+  try {
+    const { ticketId } = req.params;
+    const { notes } = await Ticket.findById(ticketId);
+    const ticketNotes = await Note.find({ _id: { $in: notes } });
+    res.status(200).json(ticketNotes);
+  } catch (err) {
+    res.status(404).json({ message: err.message });
+  }
+};
+
+export const getAssigned = async (req, res) => {
+  try {
+    const { ticketId } = req.params;
+    console.log('TID: ' + ticketId);
+    const { assigned } = await Ticket.findById(ticketId);
+    console.log(assigned);
+    const assignedDev = await User.findById(assigned);
+
+    res.status(200).json(assignedDev);
+  } catch (err) {
+    res.status(404).json({ message: err.message });
+  }
+};
+
+//UPDATE
+
+export const updateTicket = async (req, res) => {
+  try {
+    const { ticketId } = req.params;
+    const { title, description, category, submittedDate, assigned, assignedName, status, project } = req.body;
+    const ticket = await Ticket.findByIdAndUpdate(
+      ticketId,
+      { $set: { title, description, category, submittedDate, assigned, assignedName, status, project } },
+      { new: true }
+    );
+    res.status(200).json(ticketId);
+  } catch (err) {
+    res.status(500).json({ msg: err.message });
+  }
+};
+
+export const updateStatus = async (req, res) => {
+  try {
+    const { ticketId } = req.params;
+    const ticket = await Ticket.findById(ticketId);
+    const newStatus = ticket.status === 'OPEN' ? 'CLOSED' : 'OPEN';
+    ticket.status = newStatus;
+    // console.log(ticket.history);
+    updateHistory(ticket, 'Status');
+    // console.log(ticket.history);
+    await ticket.save();
+    res.status(200).json(ticket);
+    // const updatedTicket = await Ticket.findByIdAndUpdate(ticketId, { status: newStatus }, { new: true });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+//DELETE
+
+export const deleteTicket = async (req, res) => {
+  try {
+    const { ticketId } = req.params;
+    const ticket = await Ticket.findById(ticketId);
+
+    await User.findByIdAndUpdate(ticket.assigned, { $pull: { tickets: ticketId } });
+    await Project.findByIdAndUpdate(ticket.project, { $pull: { tickets: ticketId } });
+    await Note.deleteMany({ parent: ticket._id });
+    await ticket.remove();
+
+    res.status(204).send();
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
