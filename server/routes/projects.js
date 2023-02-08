@@ -35,6 +35,6 @@ router.patch('/:projectId/priority', verifyToken, setProjectPriority);
 //update description
 
 //DELETE
-router.delete('/:id', verifyToken, deleteProject);
+router.delete('/:projectId', verifyToken, deleteProject);
 
 export default router;

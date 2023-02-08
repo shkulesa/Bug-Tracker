@@ -8,7 +8,7 @@ import {
   getAssigned,
   updateStatus,
   deleteTicket,
-  // updateAssigned,
+  updateTicket,
 } from '../controllers/tickets.js';
 
 const router = express.Router();
@@ -24,7 +24,7 @@ router.get('/:ticketId/assigned', verifyToken, getAssigned);
 
 //UPDATE
 router.patch('/:ticketId/status', verifyToken, updateStatus);
-// router.patch('/assigned/:ticketId/:id', verifyToken, updateAssigned);
+router.patch('/:ticketId/update', verifyToken, updateTicket);
 
 //DELETE
 router.delete('/:ticketId', verifyToken, deleteTicket);

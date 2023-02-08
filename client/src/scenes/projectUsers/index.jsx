@@ -1,4 +1,4 @@
-import { Box, useTheme } from '@mui/material';
+import { Box, Paper, useTheme } from '@mui/material';
 import FlexBetween from 'components/FlexBetween';
 import Header from 'components/Header';
 import { useParams } from 'react-router-dom';
@@ -26,10 +26,12 @@ const ProjectUsers = () => {
           // flexGrow={4}
           width='60%'
         >
-          <ProjectsTable
-            page='USERS'
-            project={id}
-          />
+          <Paper sx={{ height: '100%' }}>
+            <ProjectsTable
+              page='USERS'
+              project={id}
+            />
+          </Paper>
         </Box>
         <Box
           height='600px'
@@ -39,6 +41,7 @@ const ProjectUsers = () => {
           <ProjectUsersForm
             sx={{ borderColor: palette.primary.main, borderRadius: '4px', borderWeight: '5px' }}
             // isNonMobile={isNonMobile}
+            linkToProject={id !== 'none'}
           />
         </Box>
       </FlexBetween>

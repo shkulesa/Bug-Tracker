@@ -10,39 +10,38 @@ import {
   Typography,
   useTheme,
 } from '@mui/material';
+import { current } from '@reduxjs/toolkit';
 import FlexBetween from 'components/FlexBetween';
 import Header from 'components/Header';
 import React, { useEffect, useState } from 'react';
+import { useLayoutEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { setUsers, setEditUser, updateProject, setProjectTeam, setEditProject } from 'state';
 import ProjectUsersTable from './ProjectUsersTable';
 
-const ProjectUsersForm = () => {
+const ProjectUsersForm = ({ linkToProject = true }) => {
   const { palette } = useTheme();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const users = useSelector((state) => state.content.users);
   const token = useSelector((state) => state.token);
   const project = useSelector((state) => state.editProject);
+  const team = useSelector((state) => state.project.team);
   const [pageType, setPageType] = useState('INFO');
   const [projectUserId, setProjectUserId] = useState('-CHOOSE A USER-');
-  const [user, setUser] = useState(null);
+  // const [user, setUser] = useState(null);
   const [currentProject, setCurrentProject] = useState(null);
+  const [currentTeam, setCurrentTeam] = useState(null);
   const [isManager, setIsManager] = useState(false);
   const [isIncluded, setIsIncluded] = useState(false);
-  const team = useSelector((state) => state.project.team);
-  const [managers, setManagers] = useState([]);
+  // const [managers, setManagers] = useState([]);
   // const { managers } = useSelector((state) => state.content.project);
 
-  console.log(users);
+  // console.log(users);
 
   const values = {
     projectUserId: projectUserId,
-  };
-
-  const togglePageType = () => {
-    setPageType(pageType === 'INFO' ? 'EDIT' : 'INFO');
   };
 
   const getUsers = async () => {
@@ -62,6 +61,7 @@ const ProjectUsersForm = () => {
     });
     const team = await response.json();
 
+    // setCurrentTeam(team);
     dispatch(setProjectTeam({ team: team }));
   };
 
@@ -77,21 +77,28 @@ const ProjectUsersForm = () => {
 
   const handleChange = (event) => {
     setProjectUserId(event.target.value);
-    let newUser = users.filter(({ _id }) => _id === event.target.value);
+    // let newUser = users.filter(({ _id }) => _id === event.target.value);
 
-    if (newUser.length > 0) {
-      setUser(newUser[0]);
-    }
+    // if (newUser.length > 0) {
+    //   setUser(newUser[0]);
+    // }
   };
 
   const toggleMember = async () => {
-    if (projectUserId && project && projectUserId !== '-CHOOSE A USER-') {
-      const response = await fetch(`http://localhost:3001/projects/${project._id}/team`, {
+    // console.log('above if');
+    // console.log('project:', project);
+    // console.log('currentProject:', currentProject);
+    // console.log('projectUserId:', projectUserId);
+    if (projectUserId && currentProject && projectUserId !== '-CHOOSE A USER-') {
+      // console.log('Making toggleMember request');
+      const response = await fetch(`http://localhost:3001/projects/${currentProject._id}/team`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify(values),
       });
+      // console.log('toggleMember response received');
       const updatedProject = await response.json();
+      // console.log('TOGGLE MEMEBER');
       // console.log(updatedProject);
       dispatch(
         updateProject({
@@ -108,16 +115,20 @@ const ProjectUsersForm = () => {
           user: updatedProject.user,
         })
       );
+
       setCurrentProject(updatedProject.project);
-      setUser(updatedProject.user);
+      setCurrentTeam(updatedProject.project.team);
+      // setUser(updatedProject.user);
       getTeamMembers(updatedProject.project._id);
-      setManagers(updatedProject.managers);
+      // setManagers(updatedProject.managers);
+      // setIsIncluded(currentTeam.includes(projectUserId));
+      // setIsManager(currentProject.managers.includes(projectUserId));
     }
   };
 
   const toggleManager = async () => {
-    if (projectUserId && project && projectUserId !== '-CHOOSE A USER-') {
-      const response = await fetch(`http://localhost:3001/projects/${project._id}/managers`, {
+    if (projectUserId && currentProject && projectUserId !== '-CHOOSE A USER-') {
+      const response = await fetch(`http://localhost:3001/projects/${currentProject._id}/managers`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify(values),
@@ -135,56 +146,75 @@ const ProjectUsersForm = () => {
         })
       );
       setCurrentProject(updatedProject);
-      setManagers(updatedProject.managers);
+      // setCurrentTeam(updatedProject.team);
+      // setManagers(updatedProject.managers);
     }
   };
 
-  useEffect(() => {
-    setProjectUserId('-CHOOSE A USER-');
-    // the useEffect body is empty
-    // console.log('team UE');
-    // console.log(team);
-    // console.log(project);
-    // console.log(currentProject);
-    console.log('project');
-    // setManagers(project.managers)
-    // console.log(project);
-    // if (currentProject !== project) setCurrentProject(project);
-    // if (currentProject) {
-    //   setManagers(currentProject.managers);
-    //   setIsManager(managers.includes(projectUserId));
-    //   console.log('real isMan: ' + isManager);
-    //   console.log('upper ue isMan? ' + currentProject.managers.includes(projectUserId));
-    //   if (user) setIsIncluded(currentProject.team.includes(user._id));
-    // }
-    // if (currentProject) setManagers(currentProject.managers);
-    // if (currentProject && user) setIsIncluded(currentProject.team.includes(user._id));
-    // setIsManager(managers.includes(projectUserId));
-    // console.log('upper ue isMan? ' + currentProject.managers.includes(projectUserId));
-  }, [project, team]);
+  // useEffect(() => {
+  //   if (!project) return;
+
+  //   setCurrentProject(project);
+  //   setCurrentTeam(project.team);
+
+  //   // This will make sure the hook runs only once on component mount or when `project` changes
+  // }, [project]);
+
+  // useEffect(() => {
+  //   getUsers();
+  //   // if (project) setManagers(project.managers);
+  //   if (linkToProject && project) {
+  //     setCurrentProject(project);
+  //     setCurrentTeam(project.team);
+  //   } else {
+  //     setCurrentProject(null);
+  //     setCurrentTeam(null);
+  //   }
+  //   // console.log('empty');
+  //   // console.log(team);
+  //   // console.log(managers);
+  //   // console.log(project);
+  // }, []);
+
+  // useLayoutEffect(() => {
+  //   // console.log('PROJECT CHANGED');
+  //   // console.log(project);
+  //   setProjectUserId('-CHOOSE A USER-');
+  // }, [project, team]);
+
+  // useEffect(() => {
+  //   if (!currentProject || !currentTeam) return;
+  //   setIsIncluded(currentTeam.includes(projectUserId));
+  //   setIsManager(currentProject.managers.includes(projectUserId));
+  // }, [projectUserId, currentProject, currentTeam]);
 
   useEffect(() => {
     getUsers();
-    // if (project) setManagers(project.managers);
-    // setCurrentProject(project);
-    // console.log(currentProject);
-    // console.log(team);
-    // console.log(managers);
+
+    if (linkToProject && project) {
+      setCurrentProject(project);
+      setCurrentTeam(project.team);
+    } else {
+      setCurrentProject(null);
+      setCurrentTeam(null);
+    }
   }, []);
 
   useEffect(() => {
-    console.log('PROJECT CHANGED');
-  }, [project]);
+    if (!currentProject || !currentTeam) return;
+
+    setIsIncluded(currentTeam.includes(projectUserId));
+    setIsManager(currentProject.managers.includes(projectUserId));
+  }, [currentProject, currentTeam, projectUserId, toggleMember]);
 
   useEffect(() => {
-    console.log('proj: ' + (project !== null) + ', user: ' + (user !== null));
-    if (user === null || project === null) return;
-    console.log('executed');
-    setIsIncluded(project.team.includes(projectUserId));
-    setIsManager(project.managers.includes(projectUserId));
-    console.log('isMan? ' + project.managers.includes(projectUserId));
-    console.log('isInc? ' + project.team.includes(projectUserId));
-  }, [projectUserId, user, project]);
+    setProjectUserId('-CHOOSE A USER-');
+
+    if (project) {
+      setCurrentProject(project);
+      setCurrentTeam(project.team);
+    }
+  }, [project, team]);
 
   return (
     <Paper sx={{ height: '100%', backgroundColor: palette.background.main }}>
@@ -201,41 +231,41 @@ const ProjectUsersForm = () => {
           pb='1rem'
         >
           <Header
-            title={project === null ? 'SELECT A PROJECT' : pageType === 'INFO' ? 'Project Users' : 'Edit Project Users'}
-            subtitle={project === null ? 'No project selected' : project.title}
+            title={!currentProject ? 'SELECT A PROJECT' : pageType === 'INFO' ? 'Project Users' : 'Edit Project Users'}
+            subtitle={!currentProject ? 'No project selected' : currentProject.title}
           />
-          <Button
-            sx={{
-              m: '1rem .5rem 0 0',
-              p: '.5rem',
-              backgroundColor: palette.primary.main,
-              color: palette.background.alt,
-              '&:hover': { color: palette.primary.main },
-            }}
-            onClick={() => {
-              navigate(`/projects/info/${project._id}`);
-            }}
-          >
-            Go To Project
-          </Button>
+          {linkToProject && (
+            <Button
+              sx={{
+                m: '1rem .5rem 0 0',
+                p: '.5rem',
+                backgroundColor: palette.primary.main,
+                color: palette.background.alt,
+                '&:hover': { color: palette.primary.main },
+              }}
+              onClick={() => {
+                navigate(`/projects/info/${currentProject._id}`);
+              }}
+            >
+              Go To Project
+            </Button>
+          )}
         </FlexBetween>
-        {project !== null && (
+        {currentProject && (
           <Box
             width='100%'
             mt='1rem'
           >
-            {project && (
-              <Box
-                height='300px'
-                pb='1rem'
-                borderBottom={`1px solid ${palette.neutral.medium}`}
-              >
-                <ProjectUsersTable
-                  team={team}
-                  project={project}
-                />
-              </Box>
-            )}
+            <Box
+              height='300px'
+              pb='1rem'
+              borderBottom={`1px solid ${palette.neutral.medium}`}
+            >
+              <ProjectUsersTable
+                team={team}
+                project={currentProject}
+              />
+            </Box>
             <Typography
               variant='h5'
               color={palette.neutral.main}
@@ -264,7 +294,7 @@ const ProjectUsersForm = () => {
                 })}
               </Select>
             </FormControl>
-            {user !== null && projectUserId !== '-CHOOSE A USER-' && (
+            {projectUserId !== '-CHOOSE A USER-' && (
               <Box
                 p='0rem 4rem'
                 justifyContent='space-around'
@@ -274,7 +304,7 @@ const ProjectUsersForm = () => {
               >
                 <Box textAlign='center'>
                   <Button
-                    disabled={user === null || projectUserId === '-CHOOSE A USER-'}
+                    // disabled={projectUserId === '-CHOOSE A USER-'}
                     onClick={toggleMember}
                     variant='outlined'
                     sx={{
@@ -295,7 +325,7 @@ const ProjectUsersForm = () => {
                 {isIncluded && (
                   <Box textAlign='center'>
                     <Button
-                      disabled={user === null || projectUserId === '-CHOOSE A USER-'}
+                      disabled={projectUserId === '-CHOOSE A USER-'}
                       onClick={toggleManager}
                       variant='outlined'
                       sx={{

@@ -121,7 +121,7 @@ const EditTicketForm = () => {
     delete finalValues.assignedId;
 
     console.log(finalValues);
-    // await updateProject(finalValues, onSubmitProps);
+    await updateProject(finalValues, onSubmitProps);
   };
 
   const getTicket = async () => {

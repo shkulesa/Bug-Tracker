@@ -45,12 +45,14 @@ export const getUserProjects = async (req, res) => {
 export const getUserTickets = async (req, res) => {
   try {
     const { id } = req.params;
-    const user = User.findById(id);
+    const user = await User.findById(id);
     const tickets = await Promise.all(user.tickets.map((id) => Ticket.findById(id)));
-
-    const formattedTickets = tickets.map(({ _id, title, category, submittedDate, submitter, status }) => {
-      return { _id, title, category, submittedDate, submitter, status };
+    // const tickets = await Ticket.find({ _id: { $in: user.tickets } });
+    console.log(tickets);
+    const formattedTickets = tickets.map(({ _id, title, category, submittedDate, submitter, status, history }) => {
+      return { _id, title, category, submittedDate, submitter, status, history };
     });
+    console.log(formattedTickets);
     res.status(200).json(formattedTickets);
   } catch (err) {
     res.status(404).json({ msg: err.message });

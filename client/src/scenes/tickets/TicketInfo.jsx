@@ -23,6 +23,7 @@ const TicketInfo = () => {
   const assigned = useSelector((state) => state.ticket.assigned);
   const notes = useSelector((state) => state.content.notes);
   const [correctedTime, setCorrectedTime] = useState('');
+  const [projectName, setProjectName] = useState('');
 
   // const [managers, setManagers] = useState([]);
   const isDev = user.role !== 'SUBMITTER';
@@ -36,6 +37,7 @@ const TicketInfo = () => {
     });
 
     const ticket = await response.json();
+    console.log(ticket);
 
     dispatch(setTicket({ ticket: ticket }));
     return ticket;
@@ -50,6 +52,18 @@ const TicketInfo = () => {
     // console.log(assigned);
 
     dispatch(setTicketAssigned({ assigned: assigned }));
+  };
+
+  const getProjectName = async (projectId) => {
+    const response = await fetch(`http://localhost:3001/projects/${projectId}`, {
+      method: 'GET',
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    const project = await response.json();
+    console.log(project.title);
+
+    setProjectName(project.title);
   };
 
   // const getTickets = async (ticketId) => {
@@ -92,6 +106,7 @@ const TicketInfo = () => {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` },
       });
+      // console.log(await response.json());
 
       navigate('/tickets');
     }
@@ -100,6 +115,7 @@ const TicketInfo = () => {
   useEffect(() => {
     getTicket()
       .then(() => {
+        getProjectName(ticket.project);
         getNotes();
         getAssigned();
         const date = new Date(ticket.submittedDate);
@@ -122,7 +138,7 @@ const TicketInfo = () => {
           subtitle={ticket && ticket.title}
         />
         <Box>
-          {isDev && (
+          {ticket && isDev && (
             // <Box p='1rem'>
             <Button
               disabled={ticket.status === 'CLOSED'}
@@ -199,7 +215,7 @@ const TicketInfo = () => {
                   fontWeight='bold'
                   color={palette.neutral.main}
                 >
-                  Ticket
+                  Project
                 </Typography>
                 {/* <Typography
                 textAlign='center'
@@ -333,7 +349,7 @@ const TicketInfo = () => {
                     // textAlign='center'
                     color={palette.primary.main}
                   >
-                    {ticket.title}
+                    {projectName !== '' && projectName}
                   </Typography>
                 </Box>
                 <Box
@@ -519,11 +535,11 @@ const TicketInfo = () => {
               </Typography>
               <Typography
                 // textAlign='center'
-                variant='h3'
+                variant='h4'
                 fontWeight='bold'
                 color={palette.primary.main}
               >
-                {ticket.description}
+                {ticket && ticket.description}
               </Typography>
             </Box>
           </Paper>

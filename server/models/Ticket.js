@@ -12,6 +12,10 @@ const TicketSchema = new mongoose.Schema(
       required: true,
     },
     submitter: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+    },
+    submitterName: {
       type: String,
       required: true,
     },

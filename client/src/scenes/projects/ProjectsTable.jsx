@@ -1,26 +1,12 @@
-import {
-  Box,
-  Button,
-  IconButton,
-  InputBase,
-  Paper,
-  TextField,
-  Typography,
-  useMediaQuery,
-  useTheme,
-} from '@mui/material';
-import { DataGrid, GridToolbar } from '@mui/x-data-grid';
-import FlexBetween from 'components/FlexBetween';
+import { Box, Button, IconButton, Paper, Typography, useMediaQuery, useTheme } from '@mui/material';
+import { DataGrid } from '@mui/x-data-grid';
 import { useDispatch, useSelector } from 'react-redux';
-import { setEditProject, setEditUser, setProjects, setProjectTeam, setUsers } from 'state';
+import { setEditProject, setProjects, setProjectTeam } from 'state';
 import { useEffect, useState } from 'react';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import PriorityHighOutlinedIcon from '@mui/icons-material/PriorityHighOutlined';
 import KeyboardDoubleArrowUpOutlinedIcon from '@mui/icons-material/KeyboardDoubleArrowUpOutlined';
 import KeyboardArrowUpOutlinedIcon from '@mui/icons-material/KeyboardArrowUpOutlined';
-// import AdminPanelSettingsOutlined from '@mui/icons-material/AdminPanelSettingsOutlined';
-// import EngineeringOutlinedIcon from '@mui/icons-material/EngineeringOutlined';
-// import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import CustomGridToolbar from 'components/CustomGridToolbar';
 import { useNavigate } from 'react-router-dom';
@@ -34,7 +20,6 @@ const ProjectsTable = ({ page, project }) => {
   const user = useSelector((state) => state.user);
   const projects = useSelector((state) => state.content.projects);
   const [isLoading, setIsLoading] = useState(true);
-  const isNonMobile = useMediaQuery('(min-width:600px)');
 
   const columns =
     page === 'PROJECTS'
@@ -92,7 +77,7 @@ const ProjectsTable = ({ page, project }) => {
                   <Typography
                     color={theme.palette.neutral.main}
                     variant='h6'
-                    sx={{ ml: '5px', display: { xs: 'none', sm: 'none', md: 'block' } }}
+                    sx={{ ml: '5px', display: { xs: 'none', sm: 'none', md: 'none', lg: 'block' } }}
                   >
                     {priority}
                   </Typography>
@@ -156,18 +141,6 @@ const ProjectsTable = ({ page, project }) => {
           },
         ];
 
-  const seeProjectDetails = (project) => {};
-
-  // const handleEditProject = (project) => {
-  //   // console.log('USER: ');
-  //   // console.log(user);
-  //   dispatch(
-  //     setEditProject({
-  //       editProject: project,
-  //     })
-  //   );
-  // };
-
   const getProjects = async () => {
     const url =
       user.role === 'ADMIN' ? 'http://localhost:3001/projects/all' : `http://localhost:3001/users/${user._id}/projects`;
@@ -177,8 +150,7 @@ const ProjectsTable = ({ page, project }) => {
       headers: { Authorization: `Bearer ${token}` },
     });
     const userProjects = await response.json();
-
-    // console.log(userProjects);
+    console.log(userProjects);
 
     dispatch(setProjects({ projects: userProjects }));
   };
@@ -191,16 +163,6 @@ const ProjectsTable = ({ page, project }) => {
     const team = await response.json();
 
     dispatch(setProjectTeam({ team: team }));
-  };
-
-  const handleEditProject = (project) => {
-    // console.log('USER: ');
-    // console.log(user);
-    dispatch(
-      setEditProject({
-        editProject: project,
-      })
-    );
   };
 
   const handleEditProjectUsers = (project) => {
@@ -235,16 +197,16 @@ const ProjectsTable = ({ page, project }) => {
       mt='.5rem'
       height='100%'
     >
-      <Paper sx={{ height: '100%', backgroundColor: theme.palette.background.main }}>
-        <DataGrid
-          loading={isLoading}
-          getRowId={(row) => row._id}
-          rows={projects || []}
-          columns={columns}
-          components={{ Toolbar: CustomGridToolbar }}
-          sx={{ border: 'none' }}
-        />
-      </Paper>
+      {/* <Paper sx={{ height: '100%', backgroundColor: theme.palette.background.main }}> */}
+      <DataGrid
+        loading={isLoading}
+        getRowId={(row) => row._id}
+        rows={projects || []}
+        columns={columns}
+        components={{ Toolbar: CustomGridToolbar }}
+        sx={{ border: 'none' }}
+      />
+      {/* </Paper> */}
     </Box>
   );
 };

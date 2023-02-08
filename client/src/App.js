@@ -17,6 +17,7 @@ import ProjectUsers from 'scenes/projectUsers';
 import Tickets from 'scenes/tickets';
 import TicketInfo from 'scenes/tickets/TicketInfo';
 import EditTicketForm from 'scenes/tickets/EditTicketForm';
+import Account from 'scenes/account';
 
 function App() {
   const mode = useSelector((state) => state.mode);
@@ -46,7 +47,7 @@ function App() {
               path='/login'
               element={<LoginPage />}
             />
-            <Route element={<Layout />}>
+            <Route element={isAuth ? <Layout /> : <Navigate to='/login' />}>
               <Route
                 path='/dashboard'
                 element={isAuth ? <Dashboard /> : <Navigate to='/login' />}
@@ -114,6 +115,10 @@ function App() {
                     <Navigate to='/login' />
                   )
                 }
+              />
+              <Route
+                path='/account-info'
+                element={isAuth ? <Account /> : <Navigate to='/login' />}
               />
             </Route>
           </Routes>

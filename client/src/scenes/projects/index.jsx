@@ -1,4 +1,4 @@
-import { Box, Button, useTheme } from '@mui/material';
+import { Box, Button, Paper, useTheme } from '@mui/material';
 import FlexBetween from 'components/FlexBetween';
 import Header from 'components/Header';
 import { useSelector } from 'react-redux';
@@ -40,7 +40,9 @@ const Projects = () => {
         height='65vh'
         // flexGrow={1}
       >
-        <ProjectsTable page='PROJECTS' />
+        <Paper sx={{ height: '100%' }}>
+          <ProjectsTable page='PROJECTS' />
+        </Paper>
       </Box>
       {/* <Box
           height='600px'

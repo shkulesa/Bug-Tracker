@@ -202,14 +202,15 @@ export const setProjectPriority = async (req, res) => {
 //DELETE
 export const deleteProject = async (req, res) => {
   try {
-    const { id } = req.params;
-    const project = await Project.findById(id);
+    const { projectId } = req.params;
+    const project = await Project.findById(projectId);
+    const projectIdObject = mongoose.Types.ObjectId(projectId);
     // if (!project) {
     //   return res.status(404).json({ msg: "Project not found" });
     // }
     const tickets = await Ticket.find({ _id: { $in: project.tickets } });
 
-    await User.updateMany({ projects: id }, { $pull: { projects: id } });
+    await User.updateMany({ projects: projectIdObject }, { $pull: { projects: projectIdObject } });
 
     for (const ticket of tickets) {
       const user = await User.findById(ticket.assigned);
@@ -221,7 +222,7 @@ export const deleteProject = async (req, res) => {
       await ticket.remove();
     }
 
-    // await Ticket.deleteMany({ project: id })
+    // await Ticket.deleteMany({ project: projectId })
     // await User.updateOne({ _id: userId }, { $pull: { tickets: ticketId } })
 
     await Note.deleteMany({ parent: project._id });

@@ -33,6 +33,11 @@ export const colorTokens = {
 export const themeSettings = (mode) => {
   return {
     palette: {
+      priority: {
+        low: '#8ac926',
+        medium: '#ffca3a',
+        high: '#ff2128',
+      },
       mode: mode,
       ...(mode === 'dark'
         ? {

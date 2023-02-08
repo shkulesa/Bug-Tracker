@@ -63,7 +63,8 @@ const NewTicketForm = () => {
     title: '',
     description: '',
     category: '',
-    submitter: user.firstName + ' ' + user.lastName,
+    submitter: user._id,
+    submitterName: user.firstName + ' ' + user.lastName,
     projectId: hasProject ? projectId : 'Select a Project',
     assignedUser: '',
   };
@@ -254,16 +255,20 @@ const NewTicketForm = () => {
                       label='Project'
                       name='projectId'
                     >
-                      {projects.map(({ _id, title }) => {
-                        return (
-                          <MenuItem
-                            key={_id}
-                            value={_id}
-                          >
-                            {title}
-                          </MenuItem>
-                        );
-                      })}
+                      {user.role === 'SUBMITTER' ? (
+                        <MenuItem value='63e278c8e586c654c380091c'>Ticket Submission</MenuItem>
+                      ) : (
+                        projects.map(({ _id, title }) => {
+                          return (
+                            <MenuItem
+                              key={_id}
+                              value={_id}
+                            >
+                              {title}
+                            </MenuItem>
+                          );
+                        })
+                      )}
                     </Select>
                   </FormControl>
                 )}

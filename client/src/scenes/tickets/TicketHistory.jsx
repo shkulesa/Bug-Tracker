@@ -21,21 +21,21 @@ const TicketHistory = ({ history }) => {
       headerName: 'Category',
       flex: 0.5,
     },
-    {
-      field: 'submitter',
-      headerName: 'Submitter',
-      flex: 0.5,
-      hide: true,
-    },
-    {
-      field: 'submittedDate',
-      headerName: 'Submitted Date',
-      flex: 0.5,
-      renderCell: ({ row: { submittedDate } }) => {
-        return submittedDate.split('.')[0].replace('T', ' ');
-      },
-      hide: true,
-    },
+    // {
+    //   field: 'submitter',
+    //   headerName: 'Submitter',
+    //   flex: 0.5,
+    //   hide: true,
+    // },
+    // {
+    //   field: 'submittedDate',
+    //   headerName: 'Submitted Date',
+    //   flex: 0.5,
+    //   renderCell: ({ row: { submittedDate } }) => {
+    //     return submittedDate.split('.')[0].replace('T', ' ');
+    //   },
+    //   hide: true,
+    // },
     {
       field: 'changedDate',
       headerName: 'Last Changed',

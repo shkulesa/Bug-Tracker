@@ -1,13 +1,11 @@
-import { Box, Button, Paper, Typography, useMediaQuery, useTheme } from '@mui/material';
+import { Box, Button, Paper, Typography, useTheme } from '@mui/material';
 import FlexBetween from 'components/FlexBetween';
 import Header from 'components/Header';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import NewNoteForm from 'scenes/notes/NewNoteForm';
-import RoleManagement from 'scenes/roleManagement';
 import { setEditProject, setNotes, setProject, setProjectTeam, setProjectTickets } from 'state';
-import EditProjectForm from './EditProjectForm';
 import ProjectNotes from './ProjectNotes';
 import ProjectTeam from './ProjectTeam';
 import ProjectTickets from './ProjectTickets';
@@ -25,7 +23,6 @@ const ProjectInfo = () => {
   const notes = useSelector((state) => state.content.notes);
 
   const [managers, setManagers] = useState([]);
-  const isNonMobile = useMediaQuery('(min-width:600px)');
   const isManager = managers.includes(user._id);
 
   const getProject = async () => {
@@ -72,7 +69,7 @@ const ProjectInfo = () => {
 
   const deleteProject = async () => {
     if (user.role === 'ADMIN') {
-      const response = await fetch(`http://localhost:3001/projects/${id}`, {
+      await fetch(`http://localhost:3001/projects/${id}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -262,10 +259,10 @@ const ProjectInfo = () => {
                   color={
                     project
                       ? project.priority === 'HIGH'
-                        ? 'red'
+                        ? palette.priority.high
                         : project.priority === 'MEDIUM'
-                        ? 'yellow'
-                        : 'green'
+                        ? palette.priority.medium
+                        : palette.priority.low
                       : palette.primary.main
                   }
                 >
