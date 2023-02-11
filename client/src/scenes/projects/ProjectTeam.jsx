@@ -1,24 +1,13 @@
-import { Box, Paper, Typography, useTheme } from '@mui/material';
+import { Box, Typography, useTheme } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import CustomGridToolbar from 'components/CustomGridToolbar';
-import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { setProjectTeam } from 'state';
+import React from 'react';
 import AdminPanelSettingsOutlinedIcon from '@mui/icons-material/AdminPanelSettingsOutlined';
 import ManageAccountsOutlinedIcon from '@mui/icons-material/ManageAccountsOutlined';
 import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
 
 const ProjectTeam = ({ team, managers }) => {
   const { palette } = useTheme();
-  const dispatch = useDispatch();
-  const token = useSelector((state) => state.token);
-  // const [isLoading, setIsLoading] = useState(true);
-
-  // useEffect(() => {
-  //   getTeamMembers();
-  //   // setManagers(managers);
-  //   setIsLoading(false);
-  // }, []);
 
   const columns = [
     {
@@ -73,16 +62,13 @@ const ProjectTeam = ({ team, managers }) => {
 
   return (
     <Box height='100%'>
-      {/* {managers && managers.length !== 0 && ( */}
       <DataGrid
-        // loading={isLoading}
         getRowId={(row) => row._id}
         rows={team || []}
         columns={columns}
         components={{ Toolbar: CustomGridToolbar }}
         sx={{ border: 'none', m: '0' }}
       />
-      {/* )} */}
     </Box>
   );
 };

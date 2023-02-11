@@ -95,7 +95,7 @@ function App() {
                     user.role === 'ADMIN' ? (
                       <RoleManagement />
                     ) : (
-                      <Navigate to='/profile' />
+                      <Navigate to='/dashboard' />
                     )
                   ) : (
                     <Navigate to='/login' />
@@ -106,10 +106,10 @@ function App() {
                 path='/manage-users/:id'
                 element={
                   isAuth ? (
-                    user.role === 'ADMIN' ? (
+                    user.role !== 'SUBMITTER' ? (
                       <ProjectUsers />
                     ) : (
-                      <Navigate to='/profile' />
+                      <Navigate to='/dashboard' />
                     )
                   ) : (
                     <Navigate to='/login' />

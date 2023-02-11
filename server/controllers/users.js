@@ -33,8 +33,8 @@ export const getUserProjects = async (req, res) => {
 
     const projects = await Promise.all(user.projects.map((id) => Project.findById(id)));
 
-    const formattedProjects = projects.map(({ _id, title, description, startDate, endDate, priority }) => {
-      return { _id, title, description, startDate, endDate, priority };
+    const formattedProjects = projects.map(({ _id, title, description, startDate, endDate, managers, priority }) => {
+      return { _id, title, description, startDate, endDate, managers, priority };
     });
     res.status(200).json(formattedProjects);
   } catch (err) {
@@ -49,9 +49,11 @@ export const getUserTickets = async (req, res) => {
     const tickets = await Promise.all(user.tickets.map((id) => Ticket.findById(id)));
     // const tickets = await Ticket.find({ _id: { $in: user.tickets } });
     console.log(tickets);
-    const formattedTickets = tickets.map(({ _id, title, category, submittedDate, submitter, status, history }) => {
-      return { _id, title, category, submittedDate, submitter, status, history };
-    });
+    const formattedTickets = tickets.map(
+      ({ _id, title, description, category, submittedDate, submitter, submitterName, status, history }) => {
+        return { _id, title, description, category, submittedDate, submitter, submitterName, status, history };
+      }
+    );
     console.log(formattedTickets);
     res.status(200).json(formattedTickets);
   } catch (err) {

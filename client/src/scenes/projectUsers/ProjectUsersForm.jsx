@@ -30,15 +30,10 @@ const ProjectUsersForm = ({ linkToProject = true }) => {
   const team = useSelector((state) => state.project.team);
   const [pageType, setPageType] = useState('INFO');
   const [projectUserId, setProjectUserId] = useState('-CHOOSE A USER-');
-  // const [user, setUser] = useState(null);
   const [currentProject, setCurrentProject] = useState(null);
   const [currentTeam, setCurrentTeam] = useState(null);
   const [isManager, setIsManager] = useState(false);
   const [isIncluded, setIsIncluded] = useState(false);
-  // const [managers, setManagers] = useState([]);
-  // const { managers } = useSelector((state) => state.content.project);
-
-  // console.log(users);
 
   const values = {
     projectUserId: projectUserId,
@@ -61,45 +56,21 @@ const ProjectUsersForm = ({ linkToProject = true }) => {
     });
     const team = await response.json();
 
-    // setCurrentTeam(team);
     dispatch(setProjectTeam({ team: team }));
   };
 
-  // const getTeamMembers = async (projectId) => {
-  //   const response = await fetch(`http://localhost:3001/projects/${projectId}/team`, {
-  //     method: 'GET',
-  //     headers: { Authorization: `Bearer ${token}` },
-  //   });
-  //   const team = await response.json();
-
-  //   dispatch(setProjectTeam({ team: team }));
-  // };
-
   const handleChange = (event) => {
     setProjectUserId(event.target.value);
-    // let newUser = users.filter(({ _id }) => _id === event.target.value);
-
-    // if (newUser.length > 0) {
-    //   setUser(newUser[0]);
-    // }
   };
 
   const toggleMember = async () => {
-    // console.log('above if');
-    // console.log('project:', project);
-    // console.log('currentProject:', currentProject);
-    // console.log('projectUserId:', projectUserId);
     if (projectUserId && currentProject && projectUserId !== '-CHOOSE A USER-') {
-      // console.log('Making toggleMember request');
       const response = await fetch(`http://localhost:3001/projects/${currentProject._id}/team`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify(values),
       });
-      // console.log('toggleMember response received');
       const updatedProject = await response.json();
-      // console.log('TOGGLE MEMEBER');
-      // console.log(updatedProject);
       dispatch(
         updateProject({
           updatedProject: updatedProject.project,
@@ -118,11 +89,7 @@ const ProjectUsersForm = ({ linkToProject = true }) => {
 
       setCurrentProject(updatedProject.project);
       setCurrentTeam(updatedProject.project.team);
-      // setUser(updatedProject.user);
       getTeamMembers(updatedProject.project._id);
-      // setManagers(updatedProject.managers);
-      // setIsIncluded(currentTeam.includes(projectUserId));
-      // setIsManager(currentProject.managers.includes(projectUserId));
     }
   };
 
@@ -134,7 +101,6 @@ const ProjectUsersForm = ({ linkToProject = true }) => {
         body: JSON.stringify(values),
       });
       const updatedProject = await response.json();
-      // console.log(updatedProject);
       dispatch(
         updateProject({
           updatedProject: updatedProject,
@@ -146,47 +112,8 @@ const ProjectUsersForm = ({ linkToProject = true }) => {
         })
       );
       setCurrentProject(updatedProject);
-      // setCurrentTeam(updatedProject.team);
-      // setManagers(updatedProject.managers);
     }
   };
-
-  // useEffect(() => {
-  //   if (!project) return;
-
-  //   setCurrentProject(project);
-  //   setCurrentTeam(project.team);
-
-  //   // This will make sure the hook runs only once on component mount or when `project` changes
-  // }, [project]);
-
-  // useEffect(() => {
-  //   getUsers();
-  //   // if (project) setManagers(project.managers);
-  //   if (linkToProject && project) {
-  //     setCurrentProject(project);
-  //     setCurrentTeam(project.team);
-  //   } else {
-  //     setCurrentProject(null);
-  //     setCurrentTeam(null);
-  //   }
-  //   // console.log('empty');
-  //   // console.log(team);
-  //   // console.log(managers);
-  //   // console.log(project);
-  // }, []);
-
-  // useLayoutEffect(() => {
-  //   // console.log('PROJECT CHANGED');
-  //   // console.log(project);
-  //   setProjectUserId('-CHOOSE A USER-');
-  // }, [project, team]);
-
-  // useEffect(() => {
-  //   if (!currentProject || !currentTeam) return;
-  //   setIsIncluded(currentTeam.includes(projectUserId));
-  //   setIsManager(currentProject.managers.includes(projectUserId));
-  // }, [projectUserId, currentProject, currentTeam]);
 
   useEffect(() => {
     getUsers();
@@ -234,7 +161,7 @@ const ProjectUsersForm = ({ linkToProject = true }) => {
             title={!currentProject ? 'SELECT A PROJECT' : pageType === 'INFO' ? 'Project Users' : 'Edit Project Users'}
             subtitle={!currentProject ? 'No project selected' : currentProject.title}
           />
-          {linkToProject && (
+          {currentProject && (
             <Button
               sx={{
                 m: '1rem .5rem 0 0',
@@ -304,7 +231,6 @@ const ProjectUsersForm = ({ linkToProject = true }) => {
               >
                 <Box textAlign='center'>
                   <Button
-                    // disabled={projectUserId === '-CHOOSE A USER-'}
                     onClick={toggleMember}
                     variant='outlined'
                     sx={{

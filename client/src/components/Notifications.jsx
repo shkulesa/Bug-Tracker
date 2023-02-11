@@ -1,7 +1,5 @@
 import { Badge, IconButton, Menu, MenuItem } from '@mui/material';
 import React, { useState } from 'react';
-import NotificationsNoneOutlinedIcon from '@mui/icons-material/NotificationsNoneOutlined';
-import NotificationsActiveOutlinedIcon from '@mui/icons-material/NotificationsActiveOutlined';
 
 const Noficiations = () => {
   const [anchorEl, setAnchorEl] = useState(null);

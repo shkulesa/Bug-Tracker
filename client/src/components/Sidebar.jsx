@@ -1,8 +1,6 @@
 import React from 'react';
 import {
   Box,
-  colors,
-  Divider,
   Drawer,
   IconButton,
   List,
@@ -16,28 +14,18 @@ import {
 import { SidebarItems } from './sidebarItems';
 import ChevronRightOutlinedIcon from '@mui/icons-material/ChevronRightOutlined';
 import ChevronLeftOutlinedIcon from '@mui/icons-material/ChevronLeftOutlined';
-import DashboardOutlinedIcon from '@mui/icons-material/DashboardOutlined';
-import BurstModeOutlinedIcon from '@mui/icons-material/BurstModeOutlined';
-import ReceiptOutlinedIcon from '@mui/icons-material/ReceiptOutlined';
-import AccountBoxOutlinedIcon from '@mui/icons-material/AccountBoxOutlined';
-import Groups2OutlinedIcon from '@mui/icons-material/Groups2Outlined';
-import AdminPanelSettingsOutlinedIcon from '@mui/icons-material/AdminPanelSettingsOutlined';
 import BugReportOutlinedIcon from '@mui/icons-material/BugReportOutlined';
-import { useEffect, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import FlexBetween from './FlexBetween';
 
 const Sidebar = ({ drawerWidth, isSidebarOpen, setIsSidebarOpen, isNonMobile, user }) => {
-  const { pathname } = useLocation();
   const [active, setActive] = useState('');
   const navigate = useNavigate();
   const theme = useTheme();
 
   const navItems = SidebarItems[user.role.toLowerCase()];
 
-  // useEffect(() => {
-  //   setActive(pathname.substring(1));
-  // }, [pathname]);
   return (
     <Box component='nav'>
       {isSidebarOpen && (
@@ -49,7 +37,6 @@ const Sidebar = ({ drawerWidth, isSidebarOpen, setIsSidebarOpen, isNonMobile, us
           sx={{
             width: drawerWidth,
             '& .MuiDrawer-paper': {
-              // color: theme.palette.secondary[200],
               backgroundColor: theme.palette.background.alt,
               boxSizing: 'border-box',
               borderWidth: isNonMobile ? 0 : '2px',

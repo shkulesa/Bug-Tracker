@@ -14,5 +14,5 @@ router.get('/:noteId', verifyToken, getNote);
 
 // DELETE
 
-router.delete('/:noteId/delete', verifyToken, deleteNote);
+router.delete('/:noteId', verifyToken, deleteNote);
 export default router;

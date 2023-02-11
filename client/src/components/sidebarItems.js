@@ -87,12 +87,18 @@ export const SidebarItems = {
       path: '/tickets',
       access: ['SUBMITTER', 'DEVELOPER', 'ADMIN'],
     },
-    // {
-    //   text: 'Manage',
-    //   icon: null,
-    //   path: null,
-    //   access: ['DEVELOPER', 'ADMIN'],
-    // },
+    {
+      text: 'Manage',
+      icon: null,
+      path: null,
+      access: ['DEVELOPER', 'ADMIN'],
+    },
+    {
+      text: 'Project Users',
+      icon: <Groups2OutlinedIcon />,
+      path: '/manage-users/none',
+      access: ['ADMIN'],
+    },
     // {
     //   text: 'User Roles',
     //   icon: <AdminPanelSettingsOutlinedIcon />,

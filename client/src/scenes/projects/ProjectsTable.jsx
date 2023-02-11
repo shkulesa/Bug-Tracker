@@ -1,4 +1,4 @@
-import { Box, Button, IconButton, Paper, Typography, useMediaQuery, useTheme } from '@mui/material';
+import { Box, Button, IconButton, Typography, useTheme } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import { useDispatch, useSelector } from 'react-redux';
 import { setEditProject, setProjects, setProjectTeam } from 'state';
@@ -20,6 +20,11 @@ const ProjectsTable = ({ page, project }) => {
   const user = useSelector((state) => state.user);
   const projects = useSelector((state) => state.content.projects);
   const [isLoading, setIsLoading] = useState(true);
+
+  const priorityComparator = (a, b) => {
+    const priorities = { LOW: 0, MEDIUM: 1, HIGH: 2 };
+    return priorities[b] - priorities[a];
+  };
 
   const columns =
     page === 'PROJECTS'
@@ -84,6 +89,7 @@ const ProjectsTable = ({ page, project }) => {
                 </Box>
               );
             },
+            sortComparator: priorityComparator,
           },
           {
             field: 'more',
@@ -105,6 +111,55 @@ const ProjectsTable = ({ page, project }) => {
                 </Box>
               );
             },
+          },
+        ]
+      : page === 'DASHBOARD'
+      ? [
+          {
+            field: 'title',
+            headerName: 'Title',
+            flex: 0.5,
+          },
+          {
+            field: 'description',
+            headerName: 'Description',
+            flex: 0.75,
+          },
+          {
+            field: 'priority',
+            headerName: 'Priority',
+            flex: 0.75,
+            renderCell: ({ row: { priority } }) => {
+              return (
+                <Box
+                  width='60%'
+                  m='0 auto'
+                  p='5px'
+                  display='flex'
+                  justifyContent='center'
+                  backgroundColor={
+                    priority === 'HIGH'
+                      ? theme.palette.primary.mediumMain
+                      : priority === 'MEDIUM'
+                      ? theme.palette.primary.medium
+                      : theme.palette.primary.light
+                  }
+                  borderRadius='4px'
+                >
+                  {priority === 'HIGH' && <PriorityHighOutlinedIcon />}
+                  {priority === 'MEDIUM' && <KeyboardDoubleArrowUpOutlinedIcon />}
+                  {priority === 'LOW' && <KeyboardArrowUpOutlinedIcon />}
+                  <Typography
+                    color={theme.palette.neutral.main}
+                    variant='h6'
+                    sx={{ ml: '5px', display: { xs: 'none', sm: 'none', md: 'none', lg: 'block' } }}
+                  >
+                    {priority}
+                  </Typography>
+                </Box>
+              );
+            },
+            sortComparator: priorityComparator,
           },
         ]
       : [
@@ -149,8 +204,14 @@ const ProjectsTable = ({ page, project }) => {
       method: 'GET',
       headers: { Authorization: `Bearer ${token}` },
     });
-    const userProjects = await response.json();
-    console.log(userProjects);
+
+    let userProjects;
+    if (page === 'USERS' && user.role === 'DEVELOPER') {
+      const allProjects = response.status === 404 ? [] : await response.json();
+      userProjects = allProjects.filter(({ managers }) => managers.includes(user._id));
+    } else {
+      userProjects = response.status === 404 ? [] : await response.json();
+    }
 
     dispatch(setProjects({ projects: userProjects }));
   };
@@ -197,16 +258,19 @@ const ProjectsTable = ({ page, project }) => {
       mt='.5rem'
       height='100%'
     >
-      {/* <Paper sx={{ height: '100%', backgroundColor: theme.palette.background.main }}> */}
       <DataGrid
         loading={isLoading}
+        initialState={{
+          sorting: {
+            sortModel: [{ field: 'priority', sort: 'asc' }],
+          },
+        }}
         getRowId={(row) => row._id}
         rows={projects || []}
         columns={columns}
         components={{ Toolbar: CustomGridToolbar }}
         sx={{ border: 'none' }}
       />
-      {/* </Paper> */}
     </Box>
   );
 };

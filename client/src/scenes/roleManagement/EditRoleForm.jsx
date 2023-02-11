@@ -53,9 +53,7 @@ const EditRoleForm = ({ isNonMobile }) => {
         mt='2rem'
         p='1rem'
         sx={{
-          // borderColor: theme.palette.neutral.main,
           borderRadius: '4px',
-          // border: `1px solid ${theme.palette.neutral.medium}`,
         }}
       >
         <Box

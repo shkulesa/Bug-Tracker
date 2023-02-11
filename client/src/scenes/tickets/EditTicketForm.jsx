@@ -1,40 +1,21 @@
-import { useEffect, useState } from 'react';
-import {
-  Box,
-  Button,
-  TextField,
-  useMediaQuery,
-  Typography,
-  useTheme,
-  Chip,
-  OutlinedInput,
-  Select,
-  MenuItem,
-  InputLabel,
-  FormControl,
-} from '@mui/material';
-import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
+import { useEffect } from 'react';
+import { Box, Button, TextField, useTheme, Select, MenuItem, InputLabel, FormControl } from '@mui/material';
 import { Formik } from 'formik';
 import * as yup from 'yup';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { setProject, setProjects, setTicket, setUsers } from 'state';
-import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { setTicket, setUsers } from 'state';
 import FlexBetween from 'components/FlexBetween';
 import Header from 'components/Header';
 
 const ticketSchema = yup.object().shape({
   title: yup.string().required('required'),
   description: yup.string().required('required'),
+  category: yup.string().required('required'),
+  project: yup.string().required('required'),
+  assignedId: yup.string().required('required'),
   status: yup.string(),
-  // endDate: yup.date(),
-  // teamUsers: yup.array().min(1, 'There must be at least one team member'),
-  // managersUsers: yup.array().min(1, 'There must be at least one manager'),
 });
-
-// const date = new Date();
-// const currentDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000).toISOString().split('T')[0];
 
 const EditTicketForm = () => {
   const navigate = useNavigate();
@@ -43,17 +24,9 @@ const EditTicketForm = () => {
   const { id } = useParams();
   const users = useSelector((state) => state.content.users);
   const token = useSelector((state) => state.token);
-  // const user = useSelector((state) => state.user);
   const ticket = useSelector((state) => state.editTicket);
   const assigned = useSelector((state) => state.ticket.assigned);
   const projects = useSelector((state) => state.content.projects);
-  // const [user, setUser] = useState(null);
-  // const [isLoading, setIsLoading] = useState(true);
-
-  console.log(users);
-
-  // const managersUsers = users.map(({ _id }) => ticket.managers.includes(_id));
-  // const teamUsers = users.map(({ _id }) => ticket.team.includes(_id));
 
   const initialValues = {
     title: ticket.title,
@@ -67,52 +40,23 @@ const EditTicketForm = () => {
   useEffect(() => {
     getTicket();
     getUsers();
-
-    // console.log(users);
   }, []);
 
-  const correctDate = (date) => {
-    const hold = new Date(date);
-    return new Date(hold.getTime() + hold.getTimezoneOffset() * 60000).toISOString();
-  };
-
-  // initialValues.submittedDate = correctDate(ticket.submittedDate);
-  // initialValues.endDate = correctDate(ticket.endDate);
-
-  // const handleTeamChange = (event) => {
-  //   const {
-  //     target: { value },
-  //   } = event;
-  //   (
-  //     // On autofill we get a stringified value.
-  //     typeof value === 'string' ? value.split(',') : value,
-  //   );
-  // };
-
   const updateProject = async (values, onSubmitProps) => {
-    console.log('CReate: ' + token);
-    console.log(values);
     const response = await fetch(`http://localhost:3001/tickets/${ticket._id}/update`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
       body: JSON.stringify(values),
     });
 
-    console.log(response);
-
     const newTicket = await response.json();
     if (newTicket) {
-      console.log('!');
       onSubmitProps.resetForm();
-      // dispatch(setProjects(tickets));
       navigate(`/tickets/info/${newTicket}`);
     }
-    console.log(newTicket);
   };
 
   const handleFormSubmit = async (values, onSubmitProps) => {
-    console.log(values);
-
     const finalValues = JSON.parse(JSON.stringify(values));
     const assignedUser = users.find((user) => user._id === values.assignedId);
 
@@ -120,7 +64,6 @@ const EditTicketForm = () => {
     finalValues.assignedName = assignedUser.firstName + ' ' + assignedUser.lastName;
     delete finalValues.assignedId;
 
-    console.log(finalValues);
     await updateProject(finalValues, onSubmitProps);
   };
 
@@ -136,17 +79,6 @@ const EditTicketForm = () => {
     return ticket;
   };
 
-  const getUser = async (userId) => {
-    const response = await fetch(`http://localhost:3001/users/${userId}`, {
-      method: 'GET',
-      headers: { Authorization: `Bearer ${token}` },
-    });
-
-    const user = await response.json();
-    // dispatch(setUsers({ users: users }));
-    // setUser(user);
-  };
-
   const getUsers = async () => {
     const response = await fetch('http://localhost:3001/users/all', {
       method: 'GET',
@@ -154,65 +86,8 @@ const EditTicketForm = () => {
     });
 
     const users = await response.json();
-    console.log(users);
     dispatch(setUsers({ users: users }));
   };
-
-  const getProjects = async () => {
-    const url = 'http://localhost:3001/projects/all';
-
-    const response = await fetch(url, {
-      method: 'GET',
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    const projects = await response.json();
-
-    console.log(projects);
-
-    dispatch(setProjects({ projects: projects }));
-  };
-
-  // const [pageType, setPageType] = useState('LOGIN');
-  // const { palette } = useTheme();
-  // const dispatch = useDispatch();
-  // const navigate = useNavigate();
-  // const isNonMobile = useMediaQuery('(min-width:600px)');
-  // const isLogin = pageType === 'LOGIN';
-  // const isRegister = pageType === 'REGISTER';
-
-  // const handleFormSubmit = async (values, onSubmitProps) => {
-  //   if (isLogin) await login(values, onSubmitProps);
-  //   if (isRegister) await register(values, onSubmitProps);
-  // };
-
-  // const login = async (values, onSubmitProps) => {
-  //   const loginResponse = await fetch('http://localhost:3001/auth/login', {
-  //     method: 'POST',
-  //     headers: { 'Content-Type': 'application/json' },
-  //     body: JSON.stringify(values),
-  //   });
-
-  //   const loggedIn = await loginResponse.json();
-  //   onSubmitProps.resetForm();
-
-  //   if (loggedIn) {
-  //     dispatch(setLogin({ user: loggedIn.user, token: loggedIn.token }));
-  //     navigate('/dashboard');
-  //   }
-  // };
-
-  // const register = async (values, onSubmitProps) => {
-  //   const savedUserResponse = await fetch('http://localhost:3001/auth/register', {
-  //     method: 'POST',
-  //     headers: { 'Content-Type': 'application/json' },
-  //     body: JSON.stringify(values),
-  //   });
-
-  //   const savedUser = await savedUserResponse.json();
-  //   onSubmitProps.resetForm();
-
-  //   if (savedUser) setPageType('LOGIN');
-  // };
 
   return (
     <Box
@@ -248,13 +123,11 @@ const EditTicketForm = () => {
         onSubmit={handleFormSubmit}
         initialValues={initialValues}
         validationSchema={ticketSchema}
-        // validator={() => ({})}
       >
         {({ values, errors, touched, handleBlur, handleChange, handleSubmit, setFieldValue, resetForm }) => {
           return (
             <form onSubmit={handleSubmit}>
               <Box
-                // display='flex'
                 display='grid'
                 gap='20px'
                 gridTemplateColumns='(1, minmax(0, 1fr))'
@@ -308,7 +181,6 @@ const EditTicketForm = () => {
                     name='assignedId'
                   >
                     {users.map((user) => {
-                      console.log(values.assignedId);
                       return (
                         <MenuItem
                           key={user._id}
@@ -333,7 +205,6 @@ const EditTicketForm = () => {
                   >
                     <MenuItem value='OPEN'>OPEN</MenuItem>
                     <MenuItem value='CLOSED'>CLOSED</MenuItem>
-                    {/* <MenuItem value='Other'>Other</MenuItem> */}
                   </Select>
                 </FormControl>
                 <FormControl>
@@ -348,7 +219,6 @@ const EditTicketForm = () => {
                     name='project'
                   >
                     {projects.map((project) => {
-                      console.log(values.project);
                       return (
                         <MenuItem
                           key={project._id}
@@ -375,7 +245,6 @@ const EditTicketForm = () => {
                 >
                   Update Ticket
                 </Button>
-                {/* {console.log(values)} */}
               </Box>
             </form>
           );

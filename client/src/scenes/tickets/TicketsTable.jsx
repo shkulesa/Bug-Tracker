@@ -1,16 +1,8 @@
-import { Box, IconButton, Paper, Typography, useTheme } from '@mui/material';
+import { Box, IconButton, Typography, useTheme } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import { useDispatch, useSelector } from 'react-redux';
 import { setTickets } from 'state';
 import { useEffect, useState } from 'react';
-// import MoreVertIcon from '@mui/icons-material/MoreVert';
-// import PriorityHighOutlinedIcon from '@mui/icons-material/PriorityHighOutlined';
-// import KeyboardDoubleArrowUpOutlinedIcon from '@mui/icons-material/KeyboardDoubleArrowUpOutlined';
-// import KeyboardArrowUpOutlinedIcon from '@mui/icons-material/KeyboardArrowUpOutlined';
-// // import AdminPanelSettingsOutlined from '@mui/icons-material/AdminPanelSettingsOutlined';
-// // import EngineeringOutlinedIcon from '@mui/icons-material/EngineeringOutlined';
-// // import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-// import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import CustomGridToolbar from 'components/CustomGridToolbar';
 
 import MoreVertIcon from '@mui/icons-material/MoreVert';
@@ -27,7 +19,6 @@ const TicketsTable = ({ isDashboard = false }) => {
   const user = useSelector((state) => state.user);
   const tickets = useSelector((state) => state.content.tickets);
   const [isLoading, setIsLoading] = useState(true);
-  // const [isSubmitter, setIsSubmitter] = useState(user.role === 'SUBMITTER');
 
   const columns = isDashboard
     ? [
@@ -41,15 +32,11 @@ const TicketsTable = ({ isDashboard = false }) => {
           headerName: 'Description',
           flex: 1,
         },
-        // {
-        //   field: 'category',
-        //   headerName: 'Category',
-        //   flex: 0.5,
-        // },
         {
           field: 'submitterName',
           headerName: 'Submitter',
           flex: 0.5,
+          hide: true,
         },
         {
           field: 'submittedDate',
@@ -98,28 +85,23 @@ const TicketsTable = ({ isDashboard = false }) => {
         {
           field: 'title',
           headerName: 'Title',
-          flex: 0.5,
+          flex: 0.75,
         },
         {
           field: 'description',
           headerName: 'Description',
-          flex: 1,
+          flex: 1.5,
         },
         {
           field: 'category',
           headerName: 'Category',
           flex: 0.5,
         },
-        // {
-        //   field: 'submitter',
-        //   headerName: 'Submitter',
-        //   flex: 0.5,
-        //   hide: true,
-        // },
         {
           field: 'submitterName',
           headerName: 'Submitter',
           flex: 0.5,
+          hide: true,
         },
         {
           field: 'submittedDate',
@@ -139,9 +121,9 @@ const TicketsTable = ({ isDashboard = false }) => {
           headerName: 'Last Changed',
           flex: 0.5,
           renderCell: ({ row: { history } }) => {
-            // console.log(history[history.length - 1]);
             return history[history.length - 1].changedDate.split('.')[0].replace('T', ' ');
           },
+          hide: true,
         },
         {
           field: 'assignedName',
@@ -180,7 +162,7 @@ const TicketsTable = ({ isDashboard = false }) => {
         },
         {
           field: 'details',
-          headerName: 'More',
+          headerName: 'Details',
           flex: 0.3,
           renderCell: ({ row: ticket }) => {
             return (
@@ -188,8 +170,6 @@ const TicketsTable = ({ isDashboard = false }) => {
                 <IconButton
                   variant='outlined'
                   onClick={() => {
-                    console.log('TICKET: ');
-                    console.log(ticket);
                     navigate(`/tickets/info/${ticket._id}`);
                   }}
                 >
@@ -200,16 +180,6 @@ const TicketsTable = ({ isDashboard = false }) => {
           },
         },
       ];
-
-  // const handleEditProject = (project) => {
-  //   // console.log('USER: ');
-  //   // console.log(user);
-  //   dispatch(
-  //     setEditProject({
-  //       editProject: project,
-  //     })
-  //   );
-  // };
 
   const getTickets = async () => {
     const url =
@@ -230,8 +200,6 @@ const TicketsTable = ({ isDashboard = false }) => {
       userTickets = response.status === 404 ? [] : await response.json();
     }
 
-    console.log(userTickets);
-    // if (!userTickets) userTickets = new []();
     dispatch(setTickets({ tickets: userTickets }));
   };
 
@@ -246,16 +214,19 @@ const TicketsTable = ({ isDashboard = false }) => {
       mt='.5rem'
       height='100%'
     >
-      {/* <Paper sx={{ height: '100%', backgroundColor: palette.background.main }}> */}
       <DataGrid
         loading={isLoading}
+        initialState={{
+          sorting: {
+            sortModel: [{ field: 'status', sort: 'desc' }],
+          },
+        }}
         getRowId={(row) => row._id}
         rows={tickets || []}
         columns={columns}
         components={{ Toolbar: CustomGridToolbar }}
         sx={{ border: 'none' }}
       />
-      {/* </Paper> */}
     </Box>
   );
 };

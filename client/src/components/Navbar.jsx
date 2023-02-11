@@ -1,28 +1,10 @@
 import React, { useState } from 'react';
-import {
-  LightModeOutlined,
-  DarkModeOutlined,
-  Menu as MenuIcon,
-  Search,
-  SettingsOutlined,
-  ArrowDropDownOutlined,
-} from '@mui/icons-material';
+import { LightModeOutlined, DarkModeOutlined, Menu as MenuIcon, ArrowDropDownOutlined } from '@mui/icons-material';
 import FlexBetween from 'components/FlexBetween';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { setLogout, setMode } from 'state';
 import profileImage from 'assets/user.png';
-import {
-  AppBar,
-  Button,
-  Box,
-  Typography,
-  IconButton,
-  InputBase,
-  Toolbar,
-  Menu,
-  MenuItem,
-  useTheme,
-} from '@mui/material';
+import { AppBar, Button, Box, Typography, IconButton, Toolbar, Menu, MenuItem, useTheme } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
 const Navbar = ({ isSidebarOpen, setIsSidebarOpen, user }) => {
@@ -56,17 +38,6 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen, user }) => {
           <IconButton onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
             <MenuIcon />
           </IconButton>
-          {/* <FlexBetween
-            backgroundColor={theme.palette.background.alt}
-            borderRadius='9px'
-            gap='3rem'
-            p='0.1rem 1.5rem'
-          >
-            <InputBase placeholder='Search...' />
-            <IconButton>
-              <Search />
-            </IconButton>
-          </FlexBetween> */}
         </FlexBetween>
 
         {/* RIGHT SIDE */}
@@ -78,9 +49,6 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen, user }) => {
               <LightModeOutlined sx={{ fontSize: '25px' }} />
             )}
           </IconButton>
-          {/* <IconButton>
-            <SettingsOutlined sx={{ fontSize: '25px' }} />
-          </IconButton> */}
 
           <FlexBetween>
             <Button

@@ -1,8 +1,7 @@
-import { Box, IconButton, Paper, Typography, useTheme } from '@mui/material';
+import { Box, IconButton, Typography, useTheme } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import CustomGridToolbar from 'components/CustomGridToolbar';
 import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import ConstructionOutlinedIcon from '@mui/icons-material/ConstructionOutlined';
 import DoneOutlineOutlinedIcon from '@mui/icons-material/DoneOutlineOutlined';
@@ -10,7 +9,6 @@ import { useNavigate } from 'react-router-dom';
 
 const ProjectTickets = ({ tickets }) => {
   const { palette } = useTheme();
-  // const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const columns = [
@@ -98,6 +96,11 @@ const ProjectTickets = ({ tickets }) => {
     <Box height='100%'>
       <DataGrid
         getRowId={(row) => row._id}
+        initialState={{
+          sorting: {
+            sortModel: [{ field: 'status', sort: 'desc' }],
+          },
+        }}
         rows={tickets || []}
         columns={columns}
         components={{ Toolbar: CustomGridToolbar }}

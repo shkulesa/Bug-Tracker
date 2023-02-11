@@ -1,24 +1,10 @@
-import { useEffect, useState } from 'react';
-import {
-  Box,
-  Button,
-  TextField,
-  useMediaQuery,
-  Typography,
-  useTheme,
-  Chip,
-  OutlinedInput,
-  Select,
-  MenuItem,
-  InputLabel,
-  FormControl,
-} from '@mui/material';
-import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
+import { useEffect } from 'react';
+import { Box, Button, TextField, useTheme, Chip, Select, MenuItem, InputLabel, FormControl } from '@mui/material';
 import { Formik } from 'formik';
 import * as yup from 'yup';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { setProjects, setUsers } from 'state';
+import { setUsers } from 'state';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import Header from 'components/Header';
@@ -27,7 +13,6 @@ const projectSchema = yup.object().shape({
   title: yup.string().required('required'),
   description: yup.string().required('required'),
   priority: yup.string(),
-  // endDate: yup.date(),
   teamUsers: yup.array().min(1, 'There must be at least one team member'),
   managersUsers: yup.array().min(1, 'There must be at least one manager'),
 });
@@ -52,39 +37,21 @@ const NewProjectForm = () => {
     managersUsers: [],
   };
 
-  // const handleTeamChange = (event) => {
-  //   const {
-  //     target: { value },
-  //   } = event;
-  //   (
-  //     // On autofill we get a stringified value.
-  //     typeof value === 'string' ? value.split(',') : value,
-  //   );
-  // };
-
   const createProject = async (values, onSubmitProps) => {
-    console.log('CReate: ' + token);
     const response = await fetch('http://localhost:3001/projects/create', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
       body: JSON.stringify(values),
     });
 
-    console.log(response);
-
     const newProject = await response.json();
     if (newProject) {
-      console.log('!');
       onSubmitProps.resetForm();
-      // dispatch(setProjects(projects));
       navigate(`/projects/info/${newProject}`);
     }
-    console.log(newProject);
   };
 
   const handleFormSubmit = async (values, onSubmitProps) => {
-    console.log(values);
-
     const finalValues = JSON.parse(JSON.stringify(values));
 
     finalValues.team = finalValues.teamUsers.map((teamUser) => {
@@ -93,8 +60,6 @@ const NewProjectForm = () => {
     finalValues.managers = finalValues.managersUsers.map((managersUser) => {
       return managersUser._id;
     });
-
-    console.log(finalValues);
 
     //check that user is on team & managers.
     if (!finalValues.team.includes(user._id)) finalValues.team.push(user._id);
@@ -105,7 +70,6 @@ const NewProjectForm = () => {
     const date = new Date(finalValues.endDate);
     finalValues.endDate = new Date(date.getTime() + date.getTimezoneOffset() * 60000).toISOString().split('T')[0];
 
-    console.log(finalValues);
     await createProject(finalValues, onSubmitProps);
   };
 
@@ -125,50 +89,7 @@ const NewProjectForm = () => {
 
   useEffect(() => {
     getUsers();
-    // console.log(users);
   }, []);
-
-  // const [pageType, setPageType] = useState('LOGIN');
-  // const { palette } = useTheme();
-  // const dispatch = useDispatch();
-  // const navigate = useNavigate();
-  // const isNonMobile = useMediaQuery('(min-width:600px)');
-  // const isLogin = pageType === 'LOGIN';
-  // const isRegister = pageType === 'REGISTER';
-
-  // const handleFormSubmit = async (values, onSubmitProps) => {
-  //   if (isLogin) await login(values, onSubmitProps);
-  //   if (isRegister) await register(values, onSubmitProps);
-  // };
-
-  // const login = async (values, onSubmitProps) => {
-  //   const loginResponse = await fetch('http://localhost:3001/auth/login', {
-  //     method: 'POST',
-  //     headers: { 'Content-Type': 'application/json' },
-  //     body: JSON.stringify(values),
-  //   });
-
-  //   const loggedIn = await loginResponse.json();
-  //   onSubmitProps.resetForm();
-
-  //   if (loggedIn) {
-  //     dispatch(setLogin({ user: loggedIn.user, token: loggedIn.token }));
-  //     navigate('/dashboard');
-  //   }
-  // };
-
-  // const register = async (values, onSubmitProps) => {
-  //   const savedUserResponse = await fetch('http://localhost:3001/auth/register', {
-  //     method: 'POST',
-  //     headers: { 'Content-Type': 'application/json' },
-  //     body: JSON.stringify(values),
-  //   });
-
-  //   const savedUser = await savedUserResponse.json();
-  //   onSubmitProps.resetForm();
-
-  //   if (savedUser) setPageType('LOGIN');
-  // };
 
   return (
     <Box
@@ -182,13 +103,11 @@ const NewProjectForm = () => {
         onSubmit={handleFormSubmit}
         initialValues={initialValues}
         validationSchema={projectSchema}
-        // validator={() => ({})}
       >
         {({ values, errors, touched, handleBlur, handleChange, handleSubmit, setFieldValue, resetForm }) => {
           return (
             <form onSubmit={handleSubmit}>
               <Box
-                // display='flex'
                 display='grid'
                 gap='20px'
                 gridTemplateColumns='(1, minmax(0, 1fr))'
@@ -312,11 +231,6 @@ const NewProjectForm = () => {
                 <Button
                   fullWidth
                   type='submit'
-                  // onClick={() => {
-                  //   console.log(values);
-                  //   handleSubmit()
-                  //   // handleFormSubmit(values, onSubmitProps);
-                  // }}
                   sx={{
                     m: '2rem 0',
                     p: '1rem',
@@ -327,7 +241,6 @@ const NewProjectForm = () => {
                 >
                   Create New Project
                 </Button>
-                {/* {console.log(values)} */}
               </Box>
             </form>
           );

@@ -4,7 +4,6 @@ import Header from 'components/Header';
 import RoleTable from './RoleTable';
 import { Box, useMediaQuery, useTheme } from '@mui/material';
 import EditRoleForm from './EditRoleForm';
-import { useParams } from 'react-router-dom';
 
 const RoleManagement = () => {
   const isNonMobile = useMediaQuery('(min-width: 600px)');
@@ -19,27 +18,14 @@ const RoleManagement = () => {
         title='ROLE MANAGEMENT'
         subtitle='Manage User Roles'
       />
-      {/* <Box
-        display='grid'
-        gridTemplateColumns='repeat(6, 1fr)'
-        gridAutoRows='140px'
-        gap='30px'
-        height='100%'
-      > */}
       <FlexBetween gap='30px'>
         <Box
-          // gridColumn='span 4'
-          // gridRow='span 4'
-          // height='100%'
           height='600px'
           flexGrow={1}
         >
           <RoleTable />
         </Box>
         <Box
-          // gridColumn='span 2'
-          // gridRow='span 4'
-          // height='100%'
           height='600px'
           flexGrow={0.5}
         >
@@ -49,7 +35,6 @@ const RoleManagement = () => {
           />
         </Box>
       </FlexBetween>
-      {/* </Box> */}
     </Box>
   );
 };

@@ -40,16 +40,10 @@ const Account = () => {
       >
         <Paper>
           <Box
-            // height='657px'
-            // height='100%'
             display='flex'
             flexDirection='column'
             justifyContent='space-between'
           >
-            {/* <Box
-                p='2rem 0'
-                height='100%'
-              > */}
             <Box p='1.5rem'>
               <Typography
                 variant='h5'
@@ -114,40 +108,42 @@ const Account = () => {
                 {user.role}
               </Typography>
             </Box>
-            <Box p='1.5rem'>
-              <Typography
-                variant='h5'
-                fontWeight='bold'
-                color={palette.neutral.main}
-              >
-                Tickets
-              </Typography>
-              <Typography
-                variant='h3'
-                fontWeight='bold'
-                color={palette.primary.main}
-              >
-                {user.tickets.length}
-              </Typography>
-            </Box>
-            <Box p='1.5rem'>
-              <Typography
-                variant='h5'
-                fontWeight='bold'
-                color={palette.neutral.main}
-              >
-                Projects
-              </Typography>
-              <Typography
-                variant='h3'
-                fontWeight='bold'
-                color={palette.primary.main}
-              >
-                {user.projects.length}
-              </Typography>
-            </Box>
-
-            {/* </Box> */}
+            {user.role !== 'SUBMITTER' && (
+              <>
+                <Box p='1.5rem'>
+                  <Typography
+                    variant='h5'
+                    fontWeight='bold'
+                    color={palette.neutral.main}
+                  >
+                    Tickets
+                  </Typography>
+                  <Typography
+                    variant='h3'
+                    fontWeight='bold'
+                    color={palette.primary.main}
+                  >
+                    {user.tickets.length}
+                  </Typography>
+                </Box>
+                <Box p='1.5rem'>
+                  <Typography
+                    variant='h5'
+                    fontWeight='bold'
+                    color={palette.neutral.main}
+                  >
+                    Projects
+                  </Typography>
+                  <Typography
+                    variant='h3'
+                    fontWeight='bold'
+                    color={palette.primary.main}
+                  >
+                    {user.projects.length}
+                  </Typography>
+                </Box>
+              </>
+            )}
           </Box>
         </Paper>
       </Box>

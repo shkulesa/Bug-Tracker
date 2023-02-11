@@ -150,8 +150,6 @@ const Dashboard = () => {
       userTickets = response.status === 404 ? [] : await response.json();
     }
 
-    // console.log(userTickets);
-    // if (!userTickets) userTickets = new []();
     dispatch(setTickets({ tickets: userTickets }));
     computeTicketData(userTickets);
   };
@@ -180,8 +178,8 @@ const Dashboard = () => {
   return (
     <Box m='1.5rem 2.5rem'>
       <Header
-        title='DASHBOARD'
-        subtitle='View your projects and tickets'
+        title={user.role === 'ADMIN' ? 'ADMIN DASHBOARD' : 'DASHBOARD'}
+        subtitle={user.role === 'ADMIN' ? 'View all projects and tickets' : 'View your projects and tickets'}
       />
       {/* GRID */}
       <Box
@@ -191,9 +189,6 @@ const Dashboard = () => {
         gridTemplateRows='repeat(12, 1fr)'
         gridAutoRows='160px'
         gap='20px'
-        // sx={{
-        //   "& > div": { gridColumn: isNonMediumScreens ? undefined : "span 12" },
-        // }}
       >
         {/* ROW 1 */}
         <Box
@@ -208,6 +203,10 @@ const Dashboard = () => {
                   color={palette.neutral.main}
                   fontWeight='bold'
                   p='1rem 0 0 1rem'
+                  style={{ cursor: 'pointer' }}
+                  onClick={() => {
+                    navigate('/tickets');
+                  }}
                 >
                   Tickets
                 </Typography>
@@ -247,10 +246,14 @@ const Dashboard = () => {
                   color={palette.neutral.main}
                   fontWeight='bold'
                   p='1rem 0 0 1rem'
+                  style={{ cursor: 'pointer' }}
+                  onClick={() => {
+                    navigate('/projects');
+                  }}
                 >
                   Projects
                 </Typography>
-                <ProjectsTable page='PROJECTS' />
+                <ProjectsTable page='DASHBOARD' />
               </Box>
             </Paper>
           </Box>
@@ -258,7 +261,6 @@ const Dashboard = () => {
         {/* ROW 2 */}
         <Box
           gridColumn={user.role === 'SUBMITTER' ? 'span 6 ' : 'span 4'}
-          // gridRow={user.role === 'SUBMITTER' ? 'span 6 ' : 'span 4'}
           gridRow='span 4'
         >
           <Paper>
@@ -276,7 +278,6 @@ const Dashboard = () => {
         </Box>
         <Box
           gridColumn={user.role === 'SUBMITTER' ? 'span 6 ' : 'span 4'}
-          // gridRow={user.role === 'SUBMITTER' ? 'span 6 ' : 'span 4'}
           gridRow='span 4'
         >
           <Paper>
@@ -312,8 +313,6 @@ const Dashboard = () => {
           </Box>
         )}
       </Box>
-      {/* ROW 2 */}
-
       {/* END GRID */}
     </Box>
   );

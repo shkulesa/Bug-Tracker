@@ -121,7 +121,6 @@ const ProjectInfo = () => {
               Edit Project
             </Button>
           )}
-          {/* <Box> */}
           <Button
             sx={{
               m: '1rem 0',
@@ -136,12 +135,10 @@ const ProjectInfo = () => {
           >
             Back to Projects
           </Button>
-          {/* </Box> */}
         </Box>
       </FlexBetween>
       <Box
         display='grid'
-        // height='75vh'
         gridTemplateColumns='repeat(9, 1fr)'
         gridTemplateRows='repeat(9, 1fr)'
         gridAutoRows='75px'
@@ -151,20 +148,14 @@ const ProjectInfo = () => {
           gridColumn='span 3'
           gridRow='span 9'
           height='100%'
-          // height='75vh'
         >
           <Paper>
             <Box
               height='657px'
-              // height='100%'
               display='flex'
               flexDirection='column'
               justifyContent='space-between'
             >
-              {/* <Box
-                p='2rem 0'
-                height='100%'
-              > */}
               <Box p='1rem'>
                 <Typography
                   variant='h5'
@@ -181,11 +172,7 @@ const ProjectInfo = () => {
                   {project && project.title}
                 </Typography>
               </Box>
-              <Box
-                p='1rem'
-
-                // gap='.5rem'
-              >
+              <Box p='1rem'>
                 <Typography
                   variant='h5'
                   fontWeight='bold'
@@ -201,11 +188,7 @@ const ProjectInfo = () => {
                   {project && project.description}
                 </Typography>
               </Box>
-              <Box
-                p='1rem'
-
-                // gap='.5rem'
-              >
+              <Box p='1rem'>
                 <Typography
                   variant='h5'
                   fontWeight='bold'
@@ -221,11 +204,7 @@ const ProjectInfo = () => {
                   {project && project.startDate.split('T')[0]}
                 </Typography>
               </Box>
-              <Box
-                p='1rem'
-
-                // gap='.5rem'
-              >
+              <Box p='1rem'>
                 <Typography
                   variant='h5'
                   fontWeight='bold'
@@ -241,11 +220,7 @@ const ProjectInfo = () => {
                   {project && project.endDate.split('T')[0]}
                 </Typography>
               </Box>
-              <Box
-                p='1rem'
-
-                // gap='.5rem'
-              >
+              <Box p='1rem'>
                 <Typography
                   variant='h5'
                   fontWeight='bold'
@@ -269,23 +244,15 @@ const ProjectInfo = () => {
                   {project && project.priority}
                 </Typography>
               </Box>
-
-              {/* </Box> */}
             </Box>
           </Paper>
         </Box>
         <Box
-          // height='100%'
           gridColumn='span 6'
           gridRow='span 4'
         >
           <Paper sx={{ height: '100%' }}>
-            <Box
-              // display='flex'
-              // flexDirection='column'
-              // justifyContent='space-between'
-              height='100%'
-            >
+            <Box height='100%'>
               <FlexBetween height='15%'>
                 <Typography
                   variant='h3'
@@ -295,30 +262,32 @@ const ProjectInfo = () => {
                 >
                   Team Members
                 </Typography>
-                <Button
-                  sx={{
-                    m: '1rem .5rem 0 0',
-                    p: '.5rem',
-                    backgroundColor: palette.primary.main,
-                    color: palette.background.alt,
-                    '&:hover': { color: palette.primary.main },
-                  }}
-                  onClick={() => {
-                    dispatch(
-                      setEditProject({
-                        editProject: project,
-                      })
-                    );
-                    dispatch(
-                      setProjectTeam({
-                        team: team,
-                      })
-                    );
-                    navigate(`/manage-users/${id}`);
-                  }}
-                >
-                  Edit Project Users
-                </Button>
+                {(user.role === 'ADMIN' || project.managers.includes(user._id)) && (
+                  <Button
+                    sx={{
+                      m: '1rem .5rem 0 0',
+                      p: '.5rem',
+                      backgroundColor: palette.primary.main,
+                      color: palette.background.alt,
+                      '&:hover': { color: palette.primary.main },
+                    }}
+                    onClick={() => {
+                      dispatch(
+                        setEditProject({
+                          editProject: project,
+                        })
+                      );
+                      dispatch(
+                        setProjectTeam({
+                          team: team,
+                        })
+                      );
+                      navigate(`/manage-users/${id}`);
+                    }}
+                  >
+                    Edit Project Users
+                  </Button>
+                )}
               </FlexBetween>
               <Box height='85%'>
                 <ProjectTeam
@@ -334,12 +303,7 @@ const ProjectInfo = () => {
           gridRow='span 5'
         >
           <Paper sx={{ height: '100%' }}>
-            <Box
-              // display='flex'
-              // flexDirection='column'
-              // justifyContent='space-between'
-              height='100%'
-            >
+            <Box height='100%'>
               <FlexBetween height='15%'>
                 <Typography
                   variant='h3'
@@ -375,15 +339,9 @@ const ProjectInfo = () => {
         <Box
           gridColumn='span 9'
           gridRow='span 5'
-          // gap='10px'
         >
           <Paper sx={{ height: '100%' }}>
-            <Box
-              // display='flex'
-              // flexDirection='column'
-              // justifyContent='space-between'
-              height='100%'
-            >
+            <Box height='100%'>
               <Box height='10%'>
                 <Typography
                   variant='h3'
@@ -394,10 +352,7 @@ const ProjectInfo = () => {
                   Notes
                 </Typography>
               </Box>
-              <Box
-                height='20%'
-                // mt='-1.5rem'
-              >
+              <Box height='20%'>
                 <NewNoteForm
                   kind='PROJECT'
                   parent={id}

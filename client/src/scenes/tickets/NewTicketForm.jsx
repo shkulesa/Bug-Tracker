@@ -1,26 +1,10 @@
-import { useEffect, useState } from 'react';
-import {
-  Box,
-  Button,
-  TextField,
-  useMediaQuery,
-  Typography,
-  useTheme,
-  Chip,
-  OutlinedInput,
-  Select,
-  MenuItem,
-  InputLabel,
-  FormControl,
-} from '@mui/material';
-import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
+import { useEffect } from 'react';
+import { Box, Button, TextField, useTheme, Select, MenuItem, InputLabel, FormControl } from '@mui/material';
 import { Formik } from 'formik';
 import * as yup from 'yup';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { setProjects, setUsers } from 'state';
-import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import FlexBetween from 'components/FlexBetween';
 import Header from 'components/Header';
 
@@ -30,7 +14,6 @@ const ticketSchema = yup.object().shape({
   category: yup.string().oneOf(['Bugs/Issues', 'Development', 'Other']).required('required'),
   submitter: yup.string().required('required'),
   projectId: yup.string().required('required'),
-  // endDate: yup.date(),
   assignedUser: yup.object().shape({
     _id: yup.string(),
     firstName: yup.string(),
@@ -52,12 +35,6 @@ const NewTicketForm = () => {
   const user = useSelector((state) => state.user);
   const { projectId } = useParams();
   const hasProject = projectId !== undefined && projectId !== 'none';
-  console.log(projectId);
-  console.log(hasProject);
-  console.log(users);
-
-  // const { projectId } = useParams();
-  // const needsProject = Boolean(projectId);
 
   const initialValues = {
     title: '',
@@ -77,19 +54,13 @@ const NewTicketForm = () => {
     });
 
     const newTicket = await response.json();
-    console.log(newTicket);
     if (newTicket) {
-      console.log('!');
       onSubmitProps.resetForm();
-      // dispatch(setProject(projects));
       navigate(hasProject ? `/projects/info/${projectId}` : `/tickets/info/${newTicket}`);
     }
-    // console.log(newTicket);
   };
 
   const handleFormSubmit = async (values, onSubmitProps) => {
-    console.log(values);
-
     const finalValues = JSON.parse(JSON.stringify(values));
 
     finalValues.assigned = finalValues.assignedUser._id;
@@ -97,7 +68,6 @@ const NewTicketForm = () => {
 
     delete finalValues.assignedUser;
 
-    console.log(finalValues);
     await createTicket(finalValues, onSubmitProps);
   };
 
@@ -120,8 +90,6 @@ const NewTicketForm = () => {
     });
     const userProjects = await response.json();
 
-    console.log(userProjects);
-
     dispatch(setProjects({ projects: userProjects }));
   };
 
@@ -142,7 +110,6 @@ const NewTicketForm = () => {
         {hasProject && (
           <Box>
             <Button
-              // fullWidth
               onClick={() => {
                 navigate(`/projects/info/${projectId}`);
               }}
@@ -164,13 +131,11 @@ const NewTicketForm = () => {
         onSubmit={handleFormSubmit}
         initialValues={initialValues}
         validationSchema={ticketSchema}
-        // validator={() => ({})}
       >
         {({ values, errors, touched, handleBlur, handleChange, handleSubmit, setFieldValue, resetForm }) => {
           return (
             <form onSubmit={handleSubmit}>
               <Box
-                // display='flex'
                 display='grid'
                 gap='20px'
                 gridTemplateColumns='(1, minmax(0, 1fr))'
@@ -222,16 +187,6 @@ const NewTicketForm = () => {
                     labelId='assigned-label'
                     label='Assign A Developer'
                     name='assignedUser'
-                    // renderValue={(selected) => (
-                    //   <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                    //     {selected.map((value) => (
-                    //       <Chip
-                    //         key={value._id}
-                    //         label={value.firstName + ' ' + value.lastName}
-                    //       />
-                    //     ))}
-                    //   </Box>
-                    // )}
                   >
                     {users.map((user) => (
                       <MenuItem
@@ -287,7 +242,6 @@ const NewTicketForm = () => {
                 >
                   Create New Ticket
                 </Button>
-                {/* {console.log(values)} */}
               </Box>
             </form>
           );

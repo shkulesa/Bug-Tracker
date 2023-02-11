@@ -9,8 +9,6 @@ const ProjectUsers = () => {
   const { palette } = useTheme();
   const { id } = useParams();
 
-  console.log(id);
-
   return (
     <Box
       m='1.5rem 2.5rem'
@@ -23,7 +21,6 @@ const ProjectUsers = () => {
       <FlexBetween gap='20px'>
         <Box
           height='600px'
-          // flexGrow={4}
           width='60%'
         >
           <Paper sx={{ height: '100%' }}>
@@ -35,12 +32,10 @@ const ProjectUsers = () => {
         </Box>
         <Box
           height='600px'
-          // flexGrow={0.25}
           width='40%'
         >
           <ProjectUsersForm
             sx={{ borderColor: palette.primary.main, borderRadius: '4px', borderWeight: '5px' }}
-            // isNonMobile={isNonMobile}
             linkToProject={id !== 'none'}
           />
         </Box>

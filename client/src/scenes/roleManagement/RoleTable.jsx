@@ -1,22 +1,10 @@
-import {
-  Box,
-  Button,
-  IconButton,
-  InputBase,
-  Paper,
-  TextField,
-  Typography,
-  useMediaQuery,
-  useTheme,
-} from '@mui/material';
-import { DataGrid, GridToolbar } from '@mui/x-data-grid';
-import FlexBetween from 'components/FlexBetween';
+import { Box, Button, Paper, Typography, useTheme } from '@mui/material';
+import { DataGrid } from '@mui/x-data-grid';
 import { useDispatch, useSelector } from 'react-redux';
 import { setEditUser, setUsers } from 'state';
 import { useEffect, useState } from 'react';
 import AdminPanelSettingsOutlined from '@mui/icons-material/AdminPanelSettingsOutlined';
 import EngineeringOutlinedIcon from '@mui/icons-material/EngineeringOutlined';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import CustomGridToolbar from 'components/CustomGridToolbar';
@@ -29,7 +17,6 @@ const RoleTable = () => {
   const token = useSelector((state) => state.token);
   const users = useSelector((state) => state.content.users);
   const [isLoading, setIsLoading] = useState(true);
-  const isNonMobile = useMediaQuery('(min-width:600px)');
 
   const columns = [
     {
@@ -80,12 +67,8 @@ const RoleTable = () => {
       flex: 0.4,
       renderCell: ({ row: user }) => {
         return (
-          <Box
-          // backgroundColor='red'
-          // sx={{ height: '100%', width: '100%' }}
-          >
+          <Box>
             <Button
-              // sx={{ height: '100%', width: '100%' }}
               variant='outlined'
               onClick={() => {
                 console.log('USER: ');
@@ -102,8 +85,6 @@ const RoleTable = () => {
   ];
 
   const handleEditUser = (user) => {
-    // console.log('USER: ');
-    // console.log(user);
     dispatch(
       setEditUser({
         editUser: user,

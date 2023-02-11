@@ -1,14 +1,13 @@
-import { Box, Button, Paper, Typography, useMediaQuery, useTheme } from '@mui/material';
+import { Box, Button, Paper, Typography, useTheme } from '@mui/material';
 import FlexBetween from 'components/FlexBetween';
 import Header from 'components/Header';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import NewNoteForm from 'scenes/notes/NewNoteForm';
-import { setEditTicket, setNotes, setProjectTickets, setTicket, setTicketAssigned } from 'state';
+import { setEditTicket, setNotes, setTicket, setTicketAssigned } from 'state';
 import LockOpenOutlinedIcon from '@mui/icons-material/LockOpenOutlined';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import TicketAssigned from './TicketAssigned';
 import TicketNotes from './TicketNotes';
 import TicketHistory from './TicketHistory';
 
@@ -20,15 +19,11 @@ const TicketInfo = () => {
   const token = useSelector((state) => state.token);
   const user = useSelector((state) => state.user);
   const ticket = useSelector((state) => state.content.ticket);
-  const assigned = useSelector((state) => state.ticket.assigned);
   const notes = useSelector((state) => state.content.notes);
   const [correctedTime, setCorrectedTime] = useState('');
   const [projectName, setProjectName] = useState('');
 
-  // const [managers, setManagers] = useState([]);
   const isDev = user.role !== 'SUBMITTER';
-  const isNonMobile = useMediaQuery('(min-width:600px)');
-  // const isManager = managers.includes(user._id);
 
   const getTicket = async () => {
     const response = await fetch(`http://localhost:3001/tickets/${id}`, {
@@ -37,7 +32,6 @@ const TicketInfo = () => {
     });
 
     const ticket = await response.json();
-    console.log(ticket);
 
     dispatch(setTicket({ ticket: ticket }));
     return ticket;
@@ -49,7 +43,6 @@ const TicketInfo = () => {
       headers: { Authorization: `Bearer ${token}` },
     });
     const assigned = await response.json();
-    // console.log(assigned);
 
     dispatch(setTicketAssigned({ assigned: assigned }));
   };
@@ -61,20 +54,9 @@ const TicketInfo = () => {
     });
 
     const project = await response.json();
-    console.log(project.title);
 
     setProjectName(project.title);
   };
-
-  // const getTickets = async (ticketId) => {
-  //   const response = await fetch(`http://localhost:3001/projects/${ticketId}/tickets`, {
-  //     method: 'GET',
-  //     headers: { Authorization: `Bearer ${token}` },
-  //   });
-  //   const tickets = await response.json();
-
-  //   dispatch(setProjectTickets({ tickets: tickets }));
-  // };
 
   const getNotes = async () => {
     const response = await fetch(`http://localhost:3001/tickets/${id}/notes`, {
@@ -82,7 +64,6 @@ const TicketInfo = () => {
       headers: { Authorization: `Bearer ${token}` },
     });
     const notes = await response.json();
-    // console.log(notes);
     dispatch(setNotes({ notes: notes }));
   };
 
@@ -106,7 +87,6 @@ const TicketInfo = () => {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` },
       });
-      // console.log(await response.json());
 
       navigate('/tickets');
     }
@@ -122,7 +102,6 @@ const TicketInfo = () => {
         setCorrectedTime(
           new Date(date.getTime() - date.getTimezoneOffset() * 60000).toISOString().split('.')[0].replace('T', ' ')
         );
-        // console.log(correctedTime);
       })
       .catch((err) => console.error(err));
   }, []);
@@ -178,35 +157,13 @@ const TicketInfo = () => {
           </Button>
         </Box>
       </FlexBetween>
-      <Box
-      // display='grid'
-      // // height='75vh'
-      // gridTemplateColumns='repeat(9, 1fr)'
-      // gridTemplateRows='repeat(9, 1fr)'
-      // gridAutoRows='75px'
-      // gap='20px'
-      >
-        <Box
-          // gridColumn='span 3'
-          // gridRow='span 9'
-          height='100%'
-          // height='75vh'
-        >
+      <Box>
+        <Box height='100%'>
           <Paper>
-            <FlexBetween
-            // height='657px'
-            // height='100%'
-            // display='flex'
-            // flexDirection='column'
-            // justifyContent='space-between'
-            >
-              {/* <Box
-                p='2rem 0'
-                height='100%'
-              > */}
+            <FlexBetween>
               <Box
                 p='1rem 1rem 0rem 1rem'
-                width='20%'
+                width='16%'
                 textAlign='center'
               >
                 <Typography
@@ -217,18 +174,10 @@ const TicketInfo = () => {
                 >
                   Project
                 </Typography>
-                {/* <Typography
-                textAlign='center'
-                  variant='h3'
-                  fontWeight='bold'
-                  color={palette.primary.main}
-                >
-                  {ticket && ticket.title}
-                </Typography> */}
               </Box>
               <Box
                 p='1rem 1rem 0rem 1rem'
-                width='20%'
+                width='16%'
                 textAlign='center'
               >
                 <Typography
@@ -239,18 +188,10 @@ const TicketInfo = () => {
                 >
                   Category
                 </Typography>
-                {/* <Typography
-                textAlign='center'
-                  variant='h3'
-                  fontWeight='bold'
-                  color={palette.primary.main}
-                >
-                  {ticket && ticket.category}
-                </Typography> */}
               </Box>
               <Box
                 p='1rem 1rem 0rem 1rem'
-                width='20%'
+                width='16%'
                 textAlign='center'
               >
                 <Typography
@@ -261,18 +202,10 @@ const TicketInfo = () => {
                 >
                   Assigned Dev
                 </Typography>
-                {/* <Typography
-                textAlign='center'
-                  variant='h3'
-                  fontWeight='bold'
-                  color={palette.primary.main}
-                >
-                  {ticket && ticket.submitter}
-                </Typography> */}
               </Box>
               <Box
                 p='1rem 1rem 0rem 1rem'
-                width='20%'
+                width='16%'
                 textAlign='center'
               >
                 <Typography
@@ -281,20 +214,26 @@ const TicketInfo = () => {
                   fontWeight='bold'
                   color={palette.neutral.main}
                 >
-                  Submitted
+                  Submitted On
                 </Typography>
-                {/* <Typography
-                textAlign='center'
-                  variant='h3'
-                  fontWeight='bold'
-                  color={palette.primary.main}
-                >
-                  {ticket && ticket.submittedDate.split('Z')[0].replace('T', ' ')}
-                </Typography> */}
               </Box>
               <Box
                 p='1rem 1rem 0rem 1rem'
-                width='20%'
+                width='16%'
+                textAlign='center'
+              >
+                <Typography
+                  textAlign='center'
+                  variant='h5'
+                  fontWeight='bold'
+                  color={palette.neutral.main}
+                >
+                  Submitted By
+                </Typography>
+              </Box>
+              <Box
+                p='1rem 1rem 0rem 1rem'
+                width='16%'
                 textAlign='center'
               >
                 <Typography
@@ -305,66 +244,34 @@ const TicketInfo = () => {
                 >
                   Status
                 </Typography>
-                {/* <Typography
-                textAlign='center'
-                  variant='h3'
-                  fontWeight='bold'
-                  color={ticket ? (ticket.status === 'OPEN' ? 'green' : 'red') : palette.primary.main}
-                >
-                  {ticket && ticket.status}
-                </Typography> */}
               </Box>
-
-              {/* </Box> */}
             </FlexBetween>
             {ticket && (
-              <FlexBetween
-              // height='657px'
-              // height='100%'
-              // display='flex'
-              // flexDirection='column'
-              // justifyContent='space-between'
-              >
-                {/* <Box
-                p='2rem 0'
-                height='100%'
-              > */}
+              <FlexBetween>
                 <Box
                   p='.25rem 1rem 1rem 1rem'
-                  width='20%'
+                  width='16%'
                   textAlign='center'
                 >
-                  {/* <Typography
-                textAlign='center'
-                  variant='h5'
-                  fontWeight='bold'
-                  color={palette.neutral.main}
-                >
-                  Ticket
-                </Typography> */}
                   <Typography
                     textAlign='center'
                     variant='h3'
                     fontWeight='bold'
                     // textAlign='center'
                     color={palette.primary.main}
+                    style={{ cursor: 'pointer' }}
+                    onClick={() => {
+                      navigate(`/projects/info/${ticket.project}`);
+                    }}
                   >
                     {projectName !== '' && projectName}
                   </Typography>
                 </Box>
                 <Box
                   p='.25rem 1rem 1rem 1rem'
-                  width='20%'
+                  width='16%'
                   textAlign='center'
                 >
-                  {/* <Typography
-                textAlign='center'
-                  variant='h5'
-                  fontWeight='bold'
-                  color={palette.neutral.main}
-                >
-                  Category
-                </Typography> */}
                   <Typography
                     textAlign='center'
                     variant='h3'
@@ -376,17 +283,9 @@ const TicketInfo = () => {
                 </Box>
                 <Box
                   p='.25rem 1rem 1rem 1rem'
-                  width='20%'
+                  width='16%'
                   textAlign='center'
                 >
-                  {/* <Typography
-                textAlign='center'
-                  variant='h5'
-                  fontWeight='bold'
-                  color={palette.neutral.main}
-                >
-                  Submitter
-                </Typography> */}
                   <Typography
                     textAlign='center'
                     variant='h3'
@@ -398,17 +297,9 @@ const TicketInfo = () => {
                 </Box>
                 <Box
                   p='.25rem 1rem 1rem 1rem'
-                  width='20%'
+                  width='16%'
                   textAlign='center'
                 >
-                  {/* <Typography
-                textAlign='center'
-                  variant='h5'
-                  fontWeight='bold'
-                  color={palette.neutral.main}
-                >
-                  Submitted
-                </Typography> */}
                   <Typography
                     textAlign='center'
                     variant='h3'
@@ -420,17 +311,23 @@ const TicketInfo = () => {
                 </Box>
                 <Box
                   p='.25rem 1rem 1rem 1rem'
-                  width='20%'
+                  width='16%'
                   textAlign='center'
                 >
-                  {/* <Typography
-                textAlign='center'
-                  variant='h5'
-                  fontWeight='bold'
-                  color={palette.neutral.main}
+                  <Typography
+                    textAlign='center'
+                    variant='h3'
+                    fontWeight='bold'
+                    color={palette.primary.main}
+                  >
+                    {ticket.submitterName}
+                  </Typography>
+                </Box>
+                <Box
+                  p='.25rem 1rem 1rem 1rem'
+                  width='16%'
+                  textAlign='center'
                 >
-                  Status
-                </Typography> */}
                   <Typography
                     textAlign='center'
                     variant='h3'
@@ -439,17 +336,16 @@ const TicketInfo = () => {
                   >
                     {ticket.status}
                     {isDev && (
-                      <Box>
+                      <Box mt='.2rem'>
                         <Button
-                          // sx={{ height: '100%', width: '100%' }}
                           variant='outlined'
                           onClick={updateStatus}
                           sx={{
-                            color: ticket.status === 'OPEN' ? '#FF7572' : '#72FF7B',
-                            borderColor: ticket.status === 'OPEN' ? '#FF7572' : '#72FF7B',
+                            color: ticket.status === 'OPEN' ? '#FF7572' : '#55C35D',
+                            borderColor: ticket.status === 'OPEN' ? '#FF7572' : '#55C35D',
                             '&:hover': {
-                              borderColor: ticket.status === 'OPEN' ? '#FF7572' : '#72FF7B',
-                              backgroundColor: ticket.status === 'OPEN' ? '#FFABA92C' : '#72FF7B2C',
+                              borderColor: ticket.status === 'OPEN' ? '#FF7572' : '#55C35D',
+                              backgroundColor: ticket.status === 'OPEN' ? '#FFABA92C' : '#55C35C2D',
                             },
                           }}
                         >
@@ -459,74 +355,15 @@ const TicketInfo = () => {
                     )}
                   </Typography>
                 </Box>
-
-                {/* </Box> */}
               </FlexBetween>
             )}
           </Paper>
         </Box>
 
-        {/* <Box
-          height='250px'
-          mt='1rem'
-        >
-          <Paper sx={{ height: '100%' }}>
-            <TicketAssigned assigned={assigned} />
-          </Paper>
-        </Box> */}
-
-        {/* <Box
-          gridColumn='span 6'
-          gridRow='span 5'
-        >
-          <Paper sx={{ height: '100%' }}>
-            <Box
-              // display='flex'
-              // flexDirection='column'
-              // justifyContent='space-between'
-              height='100%'
-            >
-              <FlexBetween height='15%'>
-                <Typography
-                  variant='h3'
-                  fontWeight='bold'
-                  color={palette.neutral.main}
-                  p='.5rem 0 0 .5rem'
-                >
-                  Tickets
-                </Typography>
-                <Button
-                  sx={{
-                    m: '1rem .5rem 0 0',
-                    p: '.5rem',
-                    backgroundColor: palette.primary.main,
-                    color: palette.background.alt,
-                    '&:hover': { color: palette.primary.main },
-                  }}
-                  onClick={() => {
-                    navigate(`/projects/${id}/tickets/new`);
-                  }}
-                >
-                  Submit Ticket
-                </Button>
-              </FlexBetween>
-              <Box height='85%'>
-                <ProjectTickets tickets={tickets} />
-              </Box>
-            </Box>
-          </Paper>
-        </Box> */}
-        <Box
-          // gridColumn='span 9'
-          // gridRow='span 5'
-          // // gap='10px'
-          mt='.5rem'
-          // height='400px'
-        >
+        <Box mt='.5rem'>
           <Paper sx={{ height: '100%' }}>
             <Box p='1rem'>
               <Typography
-                // textAlign='center'
                 variant='h5'
                 fontWeight='bold'
                 color={palette.neutral.main}
@@ -534,7 +371,6 @@ const TicketInfo = () => {
                 Description
               </Typography>
               <Typography
-                // textAlign='center'
                 variant='h4'
                 fontWeight='bold'
                 color={palette.primary.main}
@@ -547,19 +383,11 @@ const TicketInfo = () => {
 
         {/* Row 2 */}
         <Box
-          // gridColumn='span 9'
-          // gridRow='span 5'
-          // // gap='10px'
           mt='1rem'
           height='400px'
         >
           <Paper sx={{ height: '100%' }}>
-            <Box
-              // display='flex'
-              // flexDirection='column'
-              // justifyContent='space-between'
-              height='100%'
-            >
+            <Box height='100%'>
               <Box height='10%'>
                 <Typography
                   variant='h3'
@@ -590,19 +418,11 @@ const TicketInfo = () => {
         </Box>
         {/* row 3 */}
         <Box
-          // gridColumn='span 9'
-          // gridRow='span 5'
-          // // gap='10px'
           mt='1rem'
           height='400px'
         >
           <Paper sx={{ height: '100%' }}>
-            <Box
-              // display='flex'
-              // flexDirection='column'
-              // justifyContent='space-between'
-              height='100%'
-            >
+            <Box height='100%'>
               <Box height='15%'>
                 <Typography
                   variant='h3'
@@ -613,18 +433,7 @@ const TicketInfo = () => {
                   Ticket History
                 </Typography>
               </Box>
-              <Box
-                height='85%'
-                // mt='-1.5rem'
-              >
-                {ticket && <TicketHistory history={ticket.history} />}
-              </Box>
-              {/* <Box height='70%'>
-                <TicketNotes
-                  notes={notes}
-                  isDev={isDev}
-                />
-              </Box> */}
+              <Box height='85%'>{ticket && <TicketHistory history={ticket.history} />}</Box>
             </Box>
           </Paper>
         </Box>

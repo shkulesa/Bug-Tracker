@@ -12,13 +12,6 @@ const TicketAssigned = ({ assigned }) => {
   const { palette } = useTheme();
   const dispatch = useDispatch();
   const token = useSelector((state) => state.token);
-  // const [isLoading, setIsLoading] = useState(true);
-
-  // useEffect(() => {
-  //   getTeamMembers();
-  //   // setManagers(managers);
-  //   setIsLoading(false);
-  // }, []);
 
   const columns = [
     {
