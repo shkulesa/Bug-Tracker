@@ -80,6 +80,25 @@ const TicketsTable = ({ isDashboard = false }) => {
             );
           },
         },
+        {
+          field: 'details',
+          headerName: 'Details',
+          flex: 0.2,
+          renderCell: ({ row: ticket }) => {
+            return (
+              <Box>
+                <IconButton
+                  variant='outlined'
+                  onClick={() => {
+                    navigate(`/tickets/info/${ticket._id}`);
+                  }}
+                >
+                  <MoreVertIcon />
+                </IconButton>
+              </Box>
+            );
+          },
+        },
       ]
     : [
         {
@@ -224,6 +243,7 @@ const TicketsTable = ({ isDashboard = false }) => {
         getRowId={(row) => row._id}
         rows={tickets || []}
         columns={columns}
+        density={!isDashboard && tickets && tickets.length > 5 ? 'compact' : 'standard'}
         components={{ Toolbar: CustomGridToolbar }}
         sx={{ border: 'none' }}
       />

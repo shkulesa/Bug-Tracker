@@ -22,8 +22,7 @@ const TicketInfo = () => {
   const notes = useSelector((state) => state.content.notes);
   const [correctedTime, setCorrectedTime] = useState('');
   const [projectName, setProjectName] = useState('');
-
-  const isDev = user.role !== 'SUBMITTER';
+  const isDev = user.role !== 'SUBMITTER' && user.tickets.includes(id);
 
   const getTicket = async () => {
     const response = await fetch(`http://localhost:3001/tickets/${id}`, {
@@ -118,7 +117,6 @@ const TicketInfo = () => {
         />
         <Box>
           {ticket && isDev && (
-            // <Box p='1rem'>
             <Button
               disabled={ticket.status === 'CLOSED'}
               sx={{
@@ -139,7 +137,6 @@ const TicketInfo = () => {
             >
               Edit Ticket
             </Button>
-            // </Box>
           )}
           <Button
             sx={{

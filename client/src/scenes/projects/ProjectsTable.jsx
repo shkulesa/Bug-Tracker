@@ -92,8 +92,8 @@ const ProjectsTable = ({ page, project }) => {
             sortComparator: priorityComparator,
           },
           {
-            field: 'more',
-            headerName: 'More',
+            field: 'details',
+            headerName: 'Details',
             flex: 0.3,
             renderCell: ({ row: project }) => {
               return (
@@ -101,8 +101,8 @@ const ProjectsTable = ({ page, project }) => {
                   <IconButton
                     variant='outlined'
                     onClick={() => {
-                      console.log('PROJECT: ');
-                      console.log(project);
+                      // console.log('PROJECT: ');
+                      // console.log(project);
                       navigate(`/projects/info/${project._id}`);
                     }}
                   >
@@ -160,6 +160,27 @@ const ProjectsTable = ({ page, project }) => {
               );
             },
             sortComparator: priorityComparator,
+          },
+          {
+            field: 'details',
+            headerName: 'Details',
+            flex: 0.2,
+            renderCell: ({ row: project }) => {
+              return (
+                <Box>
+                  <IconButton
+                    variant='outlined'
+                    onClick={() => {
+                      console.log('PROJECT: ');
+                      console.log(project);
+                      navigate(`/projects/info/${project._id}`);
+                    }}
+                  >
+                    <MoreVertIcon />
+                  </IconButton>
+                </Box>
+              );
+            },
           },
         ]
       : [
@@ -268,6 +289,7 @@ const ProjectsTable = ({ page, project }) => {
         getRowId={(row) => row._id}
         rows={projects || []}
         columns={columns}
+        density={(!page === 'DASHBOARD' && projects && projects.length) > 5 ? 'compact' : 'standard'}
         components={{ Toolbar: CustomGridToolbar }}
         sx={{ border: 'none' }}
       />

@@ -79,8 +79,8 @@ const ProjectTickets = ({ tickets }) => {
             <IconButton
               variant='outlined'
               onClick={() => {
-                console.log('TICKET: ');
-                console.log(ticket);
+                // console.log('TICKET: ');
+                // console.log(ticket);
                 navigate(`/tickets/info/${ticket._id}`);
               }}
             >
@@ -103,6 +103,7 @@ const ProjectTickets = ({ tickets }) => {
         }}
         rows={tickets || []}
         columns={columns}
+        density={tickets && tickets.length > 5 ? 'compact' : 'standard'}
         components={{ Toolbar: CustomGridToolbar }}
         sx={{ border: 'none', m: '0' }}
       />

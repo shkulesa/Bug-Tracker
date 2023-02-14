@@ -1,20 +1,7 @@
-import {
-  Box,
-  Button,
-  FormControl,
-  InputLabel,
-  Menu,
-  MenuItem,
-  Paper,
-  Select,
-  Typography,
-  useTheme,
-} from '@mui/material';
-import { current } from '@reduxjs/toolkit';
+import { Box, Button, FormControl, InputLabel, MenuItem, Paper, Select, Typography, useTheme } from '@mui/material';
 import FlexBetween from 'components/FlexBetween';
 import Header from 'components/Header';
 import React, { useEffect, useState } from 'react';
-import { useLayoutEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { setUsers, setEditUser, updateProject, setProjectTeam, setEditProject } from 'state';
@@ -28,7 +15,7 @@ const ProjectUsersForm = ({ linkToProject = true }) => {
   const token = useSelector((state) => state.token);
   const project = useSelector((state) => state.editProject);
   const team = useSelector((state) => state.project.team);
-  const [pageType, setPageType] = useState('INFO');
+  // const [pageType, setPageType] = useState('INFO');
   const [projectUserId, setProjectUserId] = useState('-CHOOSE A USER-');
   const [currentProject, setCurrentProject] = useState(null);
   const [currentTeam, setCurrentTeam] = useState(null);
@@ -158,7 +145,7 @@ const ProjectUsersForm = ({ linkToProject = true }) => {
           pb='1rem'
         >
           <Header
-            title={!currentProject ? 'SELECT A PROJECT' : pageType === 'INFO' ? 'Project Users' : 'Edit Project Users'}
+            title={!currentProject ? 'SELECT A PROJECT' : 'Edit Project Users'}
             subtitle={!currentProject ? 'No project selected' : currentProject.title}
           />
           {currentProject && (

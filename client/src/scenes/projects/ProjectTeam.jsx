@@ -66,6 +66,7 @@ const ProjectTeam = ({ team, managers }) => {
         getRowId={(row) => row._id}
         rows={team || []}
         columns={columns}
+        density={team && team.length > 5 ? 'compact' : 'standard'}
         components={{ Toolbar: CustomGridToolbar }}
         sx={{ border: 'none', m: '0' }}
       />
