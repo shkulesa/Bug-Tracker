@@ -27,6 +27,7 @@ const NewProjectForm = () => {
   const users = useSelector((state) => state.content.users);
   const token = useSelector((state) => state.token);
   const user = useSelector((state) => state.user);
+  const apiURL = process.env.REACT_APP_API_BASE_URL;
 
   const initialValues = {
     title: '',
@@ -38,7 +39,7 @@ const NewProjectForm = () => {
   };
 
   const createProject = async (values, onSubmitProps) => {
-    const response = await fetch('http://localhost:3001/projects/create', {
+    const response = await fetch(`${apiURL}/projects/create`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
       body: JSON.stringify(values),
@@ -73,12 +74,8 @@ const NewProjectForm = () => {
     await createProject(finalValues, onSubmitProps);
   };
 
-  const ensureUsers = async () => {
-    if (users === null) await getUsers();
-  };
-
   const getUsers = async () => {
-    const response = await fetch('http://localhost:3001/users/all', {
+    const response = await fetch(`${apiURL}/users/all`, {
       method: 'GET',
       headers: { Authorization: `Bearer ${token}` },
     });

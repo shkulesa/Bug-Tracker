@@ -21,12 +21,13 @@ const ProjectInfo = () => {
   const team = useSelector((state) => state.project.team);
   const tickets = useSelector((state) => state.project.tickets);
   const notes = useSelector((state) => state.content.notes);
+  const apiURL = process.env.REACT_APP_API_BASE_URL;
 
   const [managers, setManagers] = useState([]);
   const isManager = managers.includes(user._id);
 
   const getProject = async () => {
-    const response = await fetch(`http://localhost:3001/projects/${id}`, {
+    const response = await fetch(`${apiURL}/projects/${id}`, {
       method: 'GET',
       headers: { Authorization: `Bearer ${token}` },
     });
@@ -38,7 +39,7 @@ const ProjectInfo = () => {
   };
 
   const getTeamMembers = async () => {
-    const response = await fetch(`http://localhost:3001/projects/${id}/team`, {
+    const response = await fetch(`${apiURL}/projects/${id}/team`, {
       method: 'GET',
       headers: { Authorization: `Bearer ${token}` },
     });
@@ -48,7 +49,7 @@ const ProjectInfo = () => {
   };
 
   const getTickets = async () => {
-    const response = await fetch(`http://localhost:3001/projects/${id}/tickets`, {
+    const response = await fetch(`${apiURL}/projects/${id}/tickets`, {
       method: 'GET',
       headers: { Authorization: `Bearer ${token}` },
     });
@@ -58,7 +59,7 @@ const ProjectInfo = () => {
   };
 
   const getNotes = async () => {
-    const response = await fetch(`http://localhost:3001/projects/${id}/notes`, {
+    const response = await fetch(`${apiURL}/projects/${id}/notes`, {
       method: 'GET',
       headers: { Authorization: `Bearer ${token}` },
     });
@@ -69,7 +70,7 @@ const ProjectInfo = () => {
 
   const deleteProject = async () => {
     if (user.role === 'ADMIN') {
-      await fetch(`http://localhost:3001/projects/${id}`, {
+      await fetch(`${apiURL}/projects/${id}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` },
       });

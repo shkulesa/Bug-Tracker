@@ -13,6 +13,7 @@ const NewNoteForm = ({ kind, parent }) => {
   const { palette } = useTheme();
   const token = useSelector((state) => state.token);
   const user = useSelector((state) => state.user);
+  const apiURL = process.env.REACT_APP_API_BASE_URL;
 
   const initialValues = {
     content: '',
@@ -20,7 +21,7 @@ const NewNoteForm = ({ kind, parent }) => {
 
   const createNote = async (values, onSubmitProps) => {
     if (user.role !== 'VIEWER') {
-      const response = await fetch('http://localhost:3001/notes/create', {
+      const response = await fetch(`${apiURL}/notes/create`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify(values),

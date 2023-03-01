@@ -12,6 +12,7 @@ const EditRoleForm = ({ isNonMobile }) => {
   const user = useSelector((state) => state.editUser);
   const token = useSelector((state) => state.token);
   const [newRole, setNewRole] = useState('-CHOOSE A ROLE-');
+  const apiURL = process.env.REACT_APP_API_BASE_URL;
 
   const values = {
     role: newRole,
@@ -23,7 +24,7 @@ const EditRoleForm = ({ isNonMobile }) => {
 
   const updateRole = async () => {
     if (newRole && newRole !== '-CHOOSE A ROLE-' && newRole !== user.role) {
-      const response = await fetch(`http://localhost:3001/users/${user._id}/role`, {
+      const response = await fetch(`${apiURL}/users/${user._id}/role`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify(values),

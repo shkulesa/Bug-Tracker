@@ -9,9 +9,10 @@ import { removeNote } from 'state';
 const TicketNotes = ({ notes, isDev }) => {
   const dispatch = useDispatch();
   const token = useSelector((state) => state.token);
+  const apiURL = process.env.REACT_APP_API_BASE_URL;
 
   const deleteNote = async (id) => {
-    const response = await fetch(`http://localhost:3001/notes/${id}`, {
+    const response = await fetch(`${apiURL}/notes/${id}`, {
       method: 'DELETE',
       headers: { Authorization: `Bearer ${token}` },
     });

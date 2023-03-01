@@ -27,6 +27,7 @@ const EditTicketForm = () => {
   const ticket = useSelector((state) => state.editTicket);
   const assigned = useSelector((state) => state.ticket.assigned);
   const projects = useSelector((state) => state.content.projects);
+  const apiURL = process.env.REACT_APP_API_BASE_URL;
 
   const initialValues = {
     title: ticket.title,
@@ -43,7 +44,7 @@ const EditTicketForm = () => {
   }, []);
 
   const updateProject = async (values, onSubmitProps) => {
-    const response = await fetch(`http://localhost:3001/tickets/${ticket._id}/update`, {
+    const response = await fetch(`${apiURL}/tickets/${ticket._id}/update`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
       body: JSON.stringify(values),
@@ -68,7 +69,7 @@ const EditTicketForm = () => {
   };
 
   const getTicket = async () => {
-    const response = await fetch(`http://localhost:3001/tickets/${id}`, {
+    const response = await fetch(`${apiURL}/tickets/${id}`, {
       method: 'GET',
       headers: { Authorization: `Bearer ${token}` },
     });
@@ -80,7 +81,7 @@ const EditTicketForm = () => {
   };
 
   const getUsers = async () => {
-    const response = await fetch('http://localhost:3001/users/all', {
+    const response = await fetch(`${apiURL}/users/all`, {
       method: 'GET',
       headers: { Authorization: `Bearer ${token}` },
     });

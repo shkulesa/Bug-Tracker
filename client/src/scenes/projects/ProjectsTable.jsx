@@ -15,11 +15,11 @@ const ProjectsTable = ({ page, project }) => {
   const theme = useTheme();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
   const token = useSelector((state) => state.token);
   const user = useSelector((state) => state.user);
   const projects = useSelector((state) => state.content.projects);
   const [isLoading, setIsLoading] = useState(true);
+  const apiURL = process.env.REACT_APP_API_BASE_URL;
 
   const priorityComparator = (a, b) => {
     const priorities = { LOW: 0, MEDIUM: 1, HIGH: 2 };
@@ -220,8 +220,8 @@ const ProjectsTable = ({ page, project }) => {
   const getProjects = async () => {
     const url =
       user.role === 'ADMIN' || user.role === 'VIEWER'
-        ? 'http://localhost:3001/projects/all'
-        : `http://localhost:3001/users/${user._id}/projects`;
+        ? `${apiURL}/projects/all`
+        : `${apiURL}/users/${user._id}/projects`;
 
     const response = await fetch(url, {
       method: 'GET',
@@ -240,7 +240,7 @@ const ProjectsTable = ({ page, project }) => {
   };
 
   const getTeamMembers = async (projectId) => {
-    const response = await fetch(`http://localhost:3001/projects/${projectId}/team`, {
+    const response = await fetch(`${apiURL}/projects/${projectId}/team`, {
       method: 'GET',
       headers: { Authorization: `Bearer ${token}` },
     });

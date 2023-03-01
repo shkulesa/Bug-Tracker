@@ -38,6 +38,7 @@ const Form = () => {
   const isNonMobile = useMediaQuery('(min-width:600px)');
   const isLogin = pageType === 'LOGIN';
   const isRegister = pageType === 'REGISTER';
+  const apiURL = process.env.REACT_APP_API_BASE_URL;
 
   const demoLogin = () => {
     const demoValues = { email: 'demoViewer@email.com', password: 'viewer' };
@@ -50,7 +51,7 @@ const Form = () => {
   };
 
   const login = async (values, onSubmitProps) => {
-    const loginResponse = await fetch('http://localhost:3001/auth/login', {
+    const loginResponse = await fetch(`${apiURL}/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(values),
@@ -68,7 +69,7 @@ const Form = () => {
   };
 
   const register = async (values, onSubmitProps) => {
-    const savedUserResponse = await fetch('http://localhost:3001/auth/register', {
+    const savedUserResponse = await fetch(`${apiURL}/auth/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(values),

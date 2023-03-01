@@ -14,11 +14,11 @@ const TicketsTable = ({ isDashboard = false }) => {
   const { palette } = useTheme();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
   const token = useSelector((state) => state.token);
   const user = useSelector((state) => state.user);
   const tickets = useSelector((state) => state.content.tickets);
   const [isLoading, setIsLoading] = useState(true);
+  const apiURL = process.env.REACT_APP_API_BASE_URL;
 
   const columns = isDashboard
     ? [
@@ -207,10 +207,7 @@ const TicketsTable = ({ isDashboard = false }) => {
       ];
 
   const getTickets = async () => {
-    const url =
-      user.role !== 'DEVELOPER'
-        ? 'http://localhost:3001/tickets/all'
-        : `http://localhost:3001/users/${user._id}/tickets`;
+    const url = user.role !== 'DEVELOPER' ? `${apiURL}/tickets/all` : `${apiURL}/users/${user._id}/tickets`;
 
     const response = await fetch(url, {
       method: 'GET',

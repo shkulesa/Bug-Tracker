@@ -35,6 +35,7 @@ const NewTicketForm = () => {
   const user = useSelector((state) => state.user);
   const { projectId } = useParams();
   const hasProject = projectId !== undefined && projectId !== 'none';
+  const apiURL = process.env.REACT_APP_API_BASE_URL;
 
   const initialValues = {
     title: '',
@@ -47,7 +48,7 @@ const NewTicketForm = () => {
   };
 
   const createTicket = async (values, onSubmitProps) => {
-    const response = await fetch('http://localhost:3001/tickets/create', {
+    const response = await fetch(`${apiURL}/tickets/create`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
       body: JSON.stringify(values),
@@ -72,7 +73,7 @@ const NewTicketForm = () => {
   };
 
   const getUsers = async () => {
-    const response = await fetch('http://localhost:3001/users/all', {
+    const response = await fetch(`${apiURL}/users/all`, {
       method: 'GET',
       headers: { Authorization: `Bearer ${token}` },
     });
@@ -82,7 +83,7 @@ const NewTicketForm = () => {
   };
 
   const getProjects = async () => {
-    const url = 'http://localhost:3001/projects/all';
+    const url = `${apiURL}/projects/all`;
 
     const response = await fetch(url, {
       method: 'GET',

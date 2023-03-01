@@ -21,6 +21,7 @@ const Dashboard = () => {
   const [statusTicketData, setStatusTicketData] = useState([]);
   const [categoryTicketData, setCategoryTicketData] = useState([]);
   const [priorityProjectData, setPriorityProjectData] = useState([]);
+  const apiURL = process.env.REACT_APP_API_BASE_URL;
 
   const computeTicketData = (tickets) => {
     console.log(tickets);
@@ -132,10 +133,7 @@ const Dashboard = () => {
   };
 
   const getTickets = async () => {
-    const url =
-      user.role !== 'DEVELOPER'
-        ? 'http://localhost:3001/tickets/all'
-        : `http://localhost:3001/users/${user._id}/tickets`;
+    const url = user.role !== 'DEVELOPER' ? `${apiURL}/tickets/all` : `${apiURL}/users/${user._id}/tickets`;
 
     const response = await fetch(url, {
       method: 'GET',
@@ -157,8 +155,8 @@ const Dashboard = () => {
   const getProjects = async () => {
     const url =
       user.role === 'ADMIN' || user.role === 'VIEWER'
-        ? 'http://localhost:3001/projects/all'
-        : `http://localhost:3001/users/${user._id}/projects`;
+        ? `${apiURL}/projects/all`
+        : `${apiURL}/users/${user._id}/projects`;
 
     const response = await fetch(url, {
       method: 'GET',

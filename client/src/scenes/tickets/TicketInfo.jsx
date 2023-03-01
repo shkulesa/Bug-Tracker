@@ -23,9 +23,10 @@ const TicketInfo = () => {
   const [correctedTime, setCorrectedTime] = useState('');
   const [projectName, setProjectName] = useState('');
   const isDev = user.role !== 'SUBMITTER' && user.tickets.includes(id);
+  const apiURL = process.env.REACT_APP_API_BASE_URL;
 
   const getTicket = async () => {
-    const response = await fetch(`http://localhost:3001/tickets/${id}`, {
+    const response = await fetch(`${apiURL}/tickets/${id}`, {
       method: 'GET',
       headers: { Authorization: `Bearer ${token}` },
     });
@@ -38,7 +39,7 @@ const TicketInfo = () => {
   };
 
   const getAssigned = async () => {
-    const response = await fetch(`http://localhost:3001/tickets/${id}/assigned`, {
+    const response = await fetch(`${apiURL}/tickets/${id}/assigned`, {
       method: 'GET',
       headers: { Authorization: `Bearer ${token}` },
     });
@@ -48,7 +49,7 @@ const TicketInfo = () => {
   };
 
   const getProjectName = async (projectId) => {
-    const response = await fetch(`http://localhost:3001/projects/${projectId}`, {
+    const response = await fetch(`${apiURL}/projects/${projectId}`, {
       method: 'GET',
       headers: { Authorization: `Bearer ${token}` },
     });
@@ -59,7 +60,7 @@ const TicketInfo = () => {
   };
 
   const getNotes = async () => {
-    const response = await fetch(`http://localhost:3001/tickets/${id}/notes`, {
+    const response = await fetch(`${apiURL}/tickets/${id}/notes`, {
       method: 'GET',
       headers: { Authorization: `Bearer ${token}` },
     });
@@ -68,7 +69,7 @@ const TicketInfo = () => {
   };
 
   const updateStatus = async () => {
-    const response = await fetch(`http://localhost:3001/tickets/${id}/status`, {
+    const response = await fetch(`${apiURL}/tickets/${id}/status`, {
       method: 'PATCH',
       headers: { Authorization: `Bearer ${token}` },
     });
@@ -83,7 +84,7 @@ const TicketInfo = () => {
 
   const deleteTicket = async () => {
     if (user.role === 'ADMIN') {
-      const response = await fetch(`http://localhost:3001/tickets/${id}`, {
+      const response = await fetch(`${apiURL}/tickets/${id}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` },
       });

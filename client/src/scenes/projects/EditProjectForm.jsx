@@ -23,6 +23,7 @@ const EditProjectForm = () => {
   const { id } = useParams();
   const token = useSelector((state) => state.token);
   const project = useSelector((state) => state.editProject);
+  const apiURL = process.env.REACT_APP_API_BASE_URL;
 
   const initialValues = {
     title: project.title,
@@ -43,7 +44,7 @@ const EditProjectForm = () => {
   };
 
   const updateProject = async (values, onSubmitProps) => {
-    const response = await fetch(`http://localhost:3001/projects/${project._id}/update`, {
+    const response = await fetch(`${apiURL}/projects/${project._id}/update`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
       body: JSON.stringify(values),
@@ -68,7 +69,7 @@ const EditProjectForm = () => {
   };
 
   const getProject = async () => {
-    const response = await fetch(`http://localhost:3001/projects/${id}`, {
+    const response = await fetch(`${apiURL}/projects/${id}`, {
       method: 'GET',
       headers: { Authorization: `Bearer ${token}` },
     });

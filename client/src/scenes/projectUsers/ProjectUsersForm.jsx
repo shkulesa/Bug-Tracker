@@ -21,13 +21,14 @@ const ProjectUsersForm = ({ linkToProject = true }) => {
   const [currentTeam, setCurrentTeam] = useState(null);
   const [isManager, setIsManager] = useState(false);
   const [isIncluded, setIsIncluded] = useState(false);
+  const apiURL = process.env.REACT_APP_API_BASE_URL;
 
   const values = {
     projectUserId: projectUserId,
   };
 
   const getUsers = async () => {
-    const response = await fetch('http://localhost:3001/users/all', {
+    const response = await fetch(`${apiURL}/users/all`, {
       method: 'GET',
       headers: { Authorization: `Bearer ${token}` },
     });
@@ -37,7 +38,7 @@ const ProjectUsersForm = ({ linkToProject = true }) => {
   };
 
   const getTeamMembers = async (projectId) => {
-    const response = await fetch(`http://localhost:3001/projects/${projectId}/team`, {
+    const response = await fetch(`${apiURL}/projects/${projectId}/team`, {
       method: 'GET',
       headers: { Authorization: `Bearer ${token}` },
     });
@@ -52,7 +53,7 @@ const ProjectUsersForm = ({ linkToProject = true }) => {
 
   const toggleMember = async () => {
     if (projectUserId && currentProject && projectUserId !== '-CHOOSE A USER-') {
-      const response = await fetch(`http://localhost:3001/projects/${currentProject._id}/team`, {
+      const response = await fetch(`${apiURL}/projects/${currentProject._id}/team`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify(values),
@@ -82,7 +83,7 @@ const ProjectUsersForm = ({ linkToProject = true }) => {
 
   const toggleManager = async () => {
     if (projectUserId && currentProject && projectUserId !== '-CHOOSE A USER-') {
-      const response = await fetch(`http://localhost:3001/projects/${currentProject._id}/managers`, {
+      const response = await fetch(`${apiURL}/projects/${currentProject._id}/managers`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify(values),

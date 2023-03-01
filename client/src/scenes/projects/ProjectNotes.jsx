@@ -10,9 +10,10 @@ const ProjectNotes = ({ notes, isManager }) => {
   const dispatch = useDispatch();
   const token = useSelector((state) => state.token);
   const user = useSelector((state) => state.user);
+  const apiURL = process.env.REACT_APP_API_BASE_URL;
 
   const deleteNote = async (id) => {
-    await fetch(`http://localhost:3001/notes/${id}`, {
+    await fetch(`${apiURL}/notes/${id}`, {
       method: 'DELETE',
       headers: { Authorization: `Bearer ${token}` },
     });

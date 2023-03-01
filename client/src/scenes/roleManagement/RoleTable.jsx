@@ -17,6 +17,7 @@ const RoleTable = () => {
   const token = useSelector((state) => state.token);
   const users = useSelector((state) => state.content.users);
   const [isLoading, setIsLoading] = useState(true);
+  const apiURL = process.env.REACT_APP_API_BASE_URL;
 
   const columns = [
     {
@@ -93,7 +94,7 @@ const RoleTable = () => {
   };
 
   const getUsers = async () => {
-    const response = await fetch('http://localhost:3001/users/all', {
+    const response = await fetch(`${apiURL}/users/all`, {
       method: 'GET',
       headers: { Authorization: `Bearer ${token}` },
     });
