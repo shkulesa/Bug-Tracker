@@ -262,7 +262,7 @@ const ProjectInfo = () => {
                 >
                   Team Members
                 </Typography>
-                {(user.role === 'ADMIN' || project.managers.includes(user._id)) && (
+                {(user.role === 'ADMIN' || (project && project.managers.includes(user._id))) && (
                   <Button
                     sx={{
                       m: '1rem .5rem 0 0',
@@ -314,6 +314,7 @@ const ProjectInfo = () => {
                   Tickets
                 </Typography>
                 <Button
+                  disabled={user.role === 'VIEWER'}
                   sx={{
                     m: '1rem .5rem 0 0',
                     p: '.5rem',
@@ -352,13 +353,15 @@ const ProjectInfo = () => {
                   Notes
                 </Typography>
               </Box>
-              <Box height='20%'>
-                <NewNoteForm
-                  kind='PROJECT'
-                  parent={id}
-                />
-              </Box>
-              <Box height='70%'>
+              {user.role !== 'VIEWER' && (
+                <Box height='20%'>
+                  <NewNoteForm
+                    kind='PROJECT'
+                    parent={id}
+                  />
+                </Box>
+              )}
+              <Box height={user.role === 'VIEWER' ? '90%' : '70%'}>
                 <ProjectNotes
                   notes={notes}
                   isManager={isManager}

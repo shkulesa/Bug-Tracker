@@ -19,18 +19,20 @@ const NewNoteForm = ({ kind, parent }) => {
   };
 
   const createNote = async (values, onSubmitProps) => {
-    const response = await fetch('http://localhost:3001/notes/create', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-      body: JSON.stringify(values),
-    });
+    if (user.role !== 'VIEWER') {
+      const response = await fetch('http://localhost:3001/notes/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify(values),
+      });
 
-    const newNote = await response.json();
-    console.log(newNote);
-    if (newNote) {
-      console.log('!');
-      onSubmitProps.resetForm();
-      dispatch(addNote({ note: newNote }));
+      const newNote = await response.json();
+      console.log(newNote);
+      if (newNote) {
+        console.log('!');
+        onSubmitProps.resetForm();
+        dispatch(addNote({ note: newNote }));
+      }
     }
   };
 

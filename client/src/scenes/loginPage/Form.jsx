@@ -39,6 +39,11 @@ const Form = () => {
   const isLogin = pageType === 'LOGIN';
   const isRegister = pageType === 'REGISTER';
 
+  const demoLogin = () => {
+    const demoValues = { email: 'demoViewer@email.com', password: 'viewer' };
+    handleFormSubmit(demoValues, { setSubmitting: () => {} });
+  };
+
   const handleFormSubmit = async (values, onSubmitProps) => {
     if (isLogin) await login(values, onSubmitProps);
     if (isRegister) await register(values, onSubmitProps);
@@ -56,7 +61,7 @@ const Form = () => {
     if (loginResponse.ok) {
       const loggedIn = await loginResponse.json();
       console.log(loggedIn);
-      onSubmitProps.resetForm();
+      // onSubmitProps.resetForm();
       dispatch(setLogin({ user: loggedIn.user, token: loggedIn.token }));
       navigate('/dashboard');
     }
@@ -151,7 +156,6 @@ const Form = () => {
                 {isLogin ? 'LOGIN' : 'REGISTER'}
               </Button>
               <Typography
-                // variant=''
                 onClick={() => {
                   setPageType(isLogin ? 'REGISTER' : 'LOGIN');
                   resetForm();
@@ -164,6 +168,19 @@ const Form = () => {
               >
                 {isLogin ? "Don't have an account? Register here" : 'Already have an account? Login here'}
               </Typography>
+              {isLogin && (
+                <Typography
+                  mt='.5rem'
+                  onClick={demoLogin}
+                  sx={{
+                    textDecoration: 'underline',
+                    color: palette.primary.main,
+                    '&:hover': { cursor: 'pointer', color: palette.primary.light },
+                  }}
+                >
+                  Click here to view the app on a demo account
+                </Typography>
+              )}
             </Box>
           </form>
         );

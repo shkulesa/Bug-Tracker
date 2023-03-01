@@ -1,11 +1,13 @@
 import { Box, Button, Paper, useTheme } from '@mui/material';
 import Header from 'components/Header';
+import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import ProjectsTable from './ProjectsTable';
 
 const Projects = () => {
   const { palette } = useTheme();
   const navigate = useNavigate();
+  const user = useSelector((state) => state.user);
 
   return (
     <Box
@@ -17,6 +19,7 @@ const Projects = () => {
         subtitle='View your projects'
       />
       <Button
+        disabled={user.role === 'VIEWER'}
         sx={{
           m: '1rem 0',
           p: '1rem',

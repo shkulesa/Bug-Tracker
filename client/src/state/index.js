@@ -25,7 +25,6 @@ const initialState = {
   editProjectUser: null,
   editProject: null,
   editTicket: null,
-  // posts: []
 };
 
 export const authSlice = createSlice({
@@ -44,7 +43,6 @@ export const authSlice = createSlice({
       state.token = null;
     },
     setUsers: (state, action) => {
-      console.log('------- USERS SET -------');
       state.content.users = action.payload.users;
     },
     setTicket: (state, action) => {
@@ -102,23 +100,6 @@ export const authSlice = createSlice({
       });
       state.content.projects = updatedProjects;
     },
-
-    // setFriends: (state, action) => {
-    //   if (state.user) {
-    //     state.user.friends = action.payload.friends;
-    //   } else {
-    //     console.error('user friends dont exist :(');
-    //   }
-    // },
-    // setPosts: (state, action) => {
-    //   state.posts = action.payload.posts;
-    // },
-    // setPost: (state, action) => {
-    //   const updatedPosts = state.posts.map((post) => {
-    //     if (post._id === action.payload.post_id) return action.payload.post;
-    //   });
-    //   state.posts = updatedPosts;
-    // },
   },
 });
 

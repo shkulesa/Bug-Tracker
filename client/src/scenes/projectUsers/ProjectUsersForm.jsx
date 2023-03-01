@@ -11,11 +11,11 @@ const ProjectUsersForm = ({ linkToProject = true }) => {
   const { palette } = useTheme();
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const user = useSelector((state) => state.user);
   const users = useSelector((state) => state.content.users);
   const token = useSelector((state) => state.token);
   const project = useSelector((state) => state.editProject);
   const team = useSelector((state) => state.project.team);
-  // const [pageType, setPageType] = useState('INFO');
   const [projectUserId, setProjectUserId] = useState('-CHOOSE A USER-');
   const [currentProject, setCurrentProject] = useState(null);
   const [currentTeam, setCurrentTeam] = useState(null);
@@ -218,6 +218,7 @@ const ProjectUsersForm = ({ linkToProject = true }) => {
               >
                 <Box textAlign='center'>
                   <Button
+                    disabled={user.role === 'VIEWER' || projectUserId === '-CHOOSE A USER-'}
                     onClick={toggleMember}
                     variant='outlined'
                     sx={{
@@ -238,7 +239,7 @@ const ProjectUsersForm = ({ linkToProject = true }) => {
                 {isIncluded && (
                   <Box textAlign='center'>
                     <Button
-                      disabled={projectUserId === '-CHOOSE A USER-'}
+                      disabled={user.role === 'VIEWER' || projectUserId === '-CHOOSE A USER-'}
                       onClick={toggleManager}
                       variant='outlined'
                       sx={{

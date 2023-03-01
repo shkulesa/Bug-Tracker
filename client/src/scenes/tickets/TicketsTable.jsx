@@ -33,6 +33,12 @@ const TicketsTable = ({ isDashboard = false }) => {
           flex: 1,
         },
         {
+          field: 'category',
+          headerName: 'Category',
+          flex: 0.5,
+          hide: true,
+        },
+        {
           field: 'submitterName',
           headerName: 'Submitter',
           flex: 0.5,

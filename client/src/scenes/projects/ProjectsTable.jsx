@@ -219,7 +219,9 @@ const ProjectsTable = ({ page, project }) => {
 
   const getProjects = async () => {
     const url =
-      user.role === 'ADMIN' ? 'http://localhost:3001/projects/all' : `http://localhost:3001/users/${user._id}/projects`;
+      user.role === 'ADMIN' || user.role === 'VIEWER'
+        ? 'http://localhost:3001/projects/all'
+        : `http://localhost:3001/users/${user._id}/projects`;
 
     const response = await fetch(url, {
       method: 'GET',

@@ -15,13 +15,10 @@ export const getUser = async (req, res) => {
 };
 
 export const getAllUsers = async (req, res) => {
-  // console.log('GAU');
   try {
-    // console.log('try');
     const users = await User.find().select('-password');
     res.status(200).json(users);
   } catch (err) {
-    // console.log('catch');
     res.status(404).json({ msg: err.message });
   }
 };
@@ -48,13 +45,11 @@ export const getUserTickets = async (req, res) => {
     const user = await User.findById(id);
     const tickets = await Promise.all(user.tickets.map((id) => Ticket.findById(id)));
     // const tickets = await Ticket.find({ _id: { $in: user.tickets } });
-    console.log(tickets);
     const formattedTickets = tickets.map(
       ({ _id, title, description, category, submittedDate, submitter, submitterName, status, history }) => {
         return { _id, title, description, category, submittedDate, submitter, submitterName, status, history };
       }
     );
-    console.log(formattedTickets);
     res.status(200).json(formattedTickets);
   } catch (err) {
     res.status(404).json({ msg: err.message });
@@ -132,9 +127,7 @@ export const addRemoveUserFromTicket = async (req, res) => {
 };
 
 export const updateRole = async (req, res) => {
-  console.log('UR');
   try {
-    console.log('Try');
     const { id } = req.params;
     const { role } = req.body;
     const user = await User.findByIdAndUpdate(
@@ -148,7 +141,6 @@ export const updateRole = async (req, res) => {
     const users = await User.find().select('-password');
     res.status(200).json(users);
   } catch (err) {
-    console.log('catch');
     res.status(404).json({ msg: err.message });
   }
 };

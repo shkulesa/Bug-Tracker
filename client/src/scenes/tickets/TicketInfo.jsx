@@ -33,6 +33,7 @@ const TicketInfo = () => {
     const ticket = await response.json();
 
     dispatch(setTicket({ ticket: ticket }));
+    getProjectName(ticket.project);
     return ticket;
   };
 
@@ -94,7 +95,6 @@ const TicketInfo = () => {
   useEffect(() => {
     getTicket()
       .then(() => {
-        getProjectName(ticket.project);
         getNotes();
         getAssigned();
         const date = new Date(ticket.submittedDate);
@@ -250,19 +250,21 @@ const TicketInfo = () => {
                   width='16%'
                   textAlign='center'
                 >
-                  <Typography
-                    textAlign='center'
-                    variant='h3'
-                    fontWeight='bold'
-                    // textAlign='center'
-                    color={palette.primary.main}
-                    style={{ cursor: 'pointer' }}
-                    onClick={() => {
-                      navigate(`/projects/info/${ticket.project}`);
-                    }}
-                  >
-                    {projectName !== '' && projectName}
-                  </Typography>
+                  <Button variant='text'>
+                    <Typography
+                      textAlign='center'
+                      variant='h3'
+                      fontWeight='bold'
+                      // textAlign='center'
+                      color={palette.primary.main}
+                      style={{ cursor: 'pointer' }}
+                      onClick={() => {
+                        navigate(`/projects/info/${ticket.project}`);
+                      }}
+                    >
+                      {projectName !== '' && projectName}
+                    </Typography>
+                  </Button>
                 </Box>
                 <Box
                   p='.25rem 1rem 1rem 1rem'
@@ -332,7 +334,7 @@ const TicketInfo = () => {
                     color={ticket ? (ticket.status === 'OPEN' ? 'green' : 'red') : palette.primary.main}
                   >
                     {ticket.status}
-                    {isDev && (
+                    {(user.role === 'ADMIN' || isDev) && (
                       <Box mt='.2rem'>
                         <Button
                           variant='outlined'
@@ -395,15 +397,17 @@ const TicketInfo = () => {
                   Notes
                 </Typography>
               </Box>
-              <Box
-                height='20%'
-                mt='-1.5rem'
-              >
-                <NewNoteForm
-                  kind='TICKET'
-                  parent={id}
-                />
-              </Box>
+              {user.role !== 'VIEWER' && (
+                <Box
+                  height='20%'
+                  mt='-1.5rem'
+                >
+                  <NewNoteForm
+                    kind='TICKET'
+                    parent={id}
+                  />
+                </Box>
+              )}
               <Box height='70%'>
                 <TicketNotes
                   notes={notes}

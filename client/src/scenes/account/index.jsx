@@ -28,7 +28,7 @@ const Account = () => {
             '&:hover': { color: palette.primary.main },
           }}
           onClick={() => {
-            navigate('/tickets/new');
+            navigate('/dashboard');
           }}
         >
           Go to Dashboard

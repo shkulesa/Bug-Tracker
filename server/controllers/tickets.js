@@ -30,7 +30,6 @@ export const createTicket = async (req, res) => {
     const { title, description, submitter, submitterName, assigned, assignedName, category, projectId } = req.body;
 
     const project = await Project.findById(projectId);
-    // const date = new Date();
     const currentDate = new Date().toISOString();
 
     const newTicket = new Ticket({
@@ -48,8 +47,6 @@ export const createTicket = async (req, res) => {
       project: projectId,
     });
 
-    // const assignedUser = await User.findById(assigned);
-    console.log(newTicket._id);
     await Project.findByIdAndUpdate(
       projectId,
       {
@@ -60,11 +57,6 @@ export const createTicket = async (req, res) => {
 
     await User.findByIdAndUpdate(assigned, { $push: { tickets: newTicket._id } });
 
-    // const assignedNames = assignedUsers.map(({ firstName, lastName }) => {
-    //   return firstName + ' ' + lastName;
-    // });
-
-    // newTicket.assigned = assignedNames;
     updateHistory(newTicket, 'Ticket Creation');
 
     await newTicket.save();
@@ -144,12 +136,9 @@ export const updateStatus = async (req, res) => {
     const ticket = await Ticket.findById(ticketId);
     const newStatus = ticket.status === 'OPEN' ? 'CLOSED' : 'OPEN';
     ticket.status = newStatus;
-    // console.log(ticket.history);
     updateHistory(ticket, 'Status');
-    // console.log(ticket.history);
     await ticket.save();
     res.status(200).json(ticket);
-    // const updatedTicket = await Ticket.findByIdAndUpdate(ticketId, { status: newStatus }, { new: true });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -158,27 +147,12 @@ export const updateStatus = async (req, res) => {
 //DELETE
 
 export const deleteTicket = async (req, res) => {
-  // try {
-  //   const { ticketId } = req.params;
-  //   const ticket = await Ticket.findById(ticketId);
-
-  //   await User.findByIdAndUpdate(ticket.assigned, { $pull: { tickets: ticketId } });
-  //   await Project.findByIdAndUpdate(ticket.project, { $pull: { tickets: ticketId } });
-  //   await Note.deleteMany({ parent: ticket._id });
-  //   await ticket.remove();
-
-  //   res.status(204).send();
-  // } catch (err) {
-  //   res.status(500).json({ message: err.message });
-  // }
   try {
     const { ticketId } = req.params;
 
     // Find the ticket to be deleted
     const ticket = await Ticket.findById(ticketId);
     const ticketIdObject = mongoose.Types.ObjectId(ticketId);
-    console.log(ticket);
-    console.log(ticketIdObject);
 
     // Update the assigned user's `tickets` array
     await User.findByIdAndUpdate(ticket.assigned, { $pull: { tickets: ticketIdObject } });
