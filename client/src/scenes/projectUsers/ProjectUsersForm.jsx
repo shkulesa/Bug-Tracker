@@ -174,6 +174,7 @@ const ProjectUsersForm = ({ linkToProject = true }) => {
             <Box
               height='300px'
               pb='1rem'
+              mb='1rem'
               borderBottom={`1px solid ${palette.neutral.medium}`}
             >
               <ProjectUsersTable
@@ -181,13 +182,13 @@ const ProjectUsersForm = ({ linkToProject = true }) => {
                 project={currentProject}
               />
             </Box>
-            <Typography
+            {/* <Typography
               variant='h5'
               color={palette.neutral.main}
               sx={{ pb: '.5rem', m: '.5rem' }}
             >
               Select a User:
-            </Typography>
+            </Typography> */}
             <FormControl fullWidth>
               <InputLabel id='user-label'>User</InputLabel>
               <Select

@@ -182,6 +182,13 @@ const Form = () => {
                   Click here to view the app on a demo account
                 </Typography>
               )}
+              <Typography
+                mt='.5rem'
+                mb='-1rem'
+                sx={{ color: palette.neutral.medium, fontSize: '12px' }}
+              >
+                Note: Render.com takes a few seconds on initial load
+              </Typography>
             </Box>
           </form>
         );
