@@ -57,11 +57,8 @@ const Form = () => {
       body: JSON.stringify(values),
     });
 
-    console.log(loginResponse);
-
     if (loginResponse.ok) {
       const loggedIn = await loginResponse.json();
-      console.log(loggedIn);
       // onSubmitProps.resetForm();
       dispatch(setLogin({ user: loggedIn.user, token: loggedIn.token }));
       navigate('/dashboard');
