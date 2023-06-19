@@ -12,6 +12,7 @@ const ticketSchema = yup.object().shape({
   title: yup.string().required('required'),
   description: yup.string().required('required'),
   category: yup.string().oneOf(['Bugs/Issues', 'Development', 'Other']).required('required'),
+  priority: yup.string(),
   submitter: yup.string().required('required'),
   projectId: yup.string().required('required'),
   assignedUser: yup.object().shape({
@@ -41,9 +42,10 @@ const NewTicketForm = () => {
     title: '',
     description: '',
     category: '',
+    priority: 'LOW',
     submitter: user._id,
     submitterName: user.firstName + ' ' + user.lastName,
-    projectId: hasProject ? projectId : 'Select a Project',
+    projectId: hasProject ? projectId : '',
     assignedUser: '',
   };
 
@@ -63,6 +65,7 @@ const NewTicketForm = () => {
 
   const handleFormSubmit = async (values, onSubmitProps) => {
     const finalValues = JSON.parse(JSON.stringify(values));
+    console.log(finalValues);
 
     finalValues.assigned = finalValues.assignedUser._id;
     finalValues.assignedName = finalValues.assignedUser.firstName + ' ' + finalValues.assignedUser.lastName;
@@ -176,6 +179,22 @@ const NewTicketForm = () => {
                     <MenuItem value='Bugs/Issues'>Bugs/Issues</MenuItem>
                     <MenuItem value='Development'>Development</MenuItem>
                     <MenuItem value='Other'>Other</MenuItem>
+                  </Select>
+                </FormControl>
+                <FormControl>
+                  <InputLabel id='priority-label'>Priority</InputLabel>
+                  <Select
+                    fullWidth
+                    sx={{ gridColumn: 'span 1' }}
+                    value={values.priority}
+                    onChange={handleChange}
+                    labelId='priority-label'
+                    label='Priority'
+                    name='priority'
+                  >
+                    <MenuItem value='HIGH'>HIGH</MenuItem>
+                    <MenuItem value='MEDIUM'>MEDIUM</MenuItem>
+                    <MenuItem value='LOW'>LOW</MenuItem>
                   </Select>
                 </FormControl>
                 <FormControl>

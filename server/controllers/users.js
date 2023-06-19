@@ -46,8 +46,19 @@ export const getUserTickets = async (req, res) => {
     const tickets = await Promise.all(user.tickets.map((id) => Ticket.findById(id)));
     // const tickets = await Ticket.find({ _id: { $in: user.tickets } });
     const formattedTickets = tickets.map(
-      ({ _id, title, description, category, submittedDate, submitter, submitterName, status, history }) => {
-        return { _id, title, description, category, submittedDate, submitter, submitterName, status, history };
+      ({ _id, title, description, category, submittedDate, submitter, submitterName, status, priority, history }) => {
+        return {
+          _id,
+          title,
+          description,
+          category,
+          submittedDate,
+          submitter,
+          submitterName,
+          status,
+          priority,
+          history,
+        };
       }
     );
     res.status(200).json(formattedTickets);

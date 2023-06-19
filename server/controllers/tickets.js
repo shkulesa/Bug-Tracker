@@ -15,6 +15,7 @@ const updateHistory = (ticket, operation) => {
     assigned: ticket.assigned,
     assignedName: ticket.assignedName,
     status: ticket.status,
+    priority: ticket.priority,
     category: ticket.category,
     project: ticket.project,
     operation: operation,
@@ -27,7 +28,8 @@ const updateHistory = (ticket, operation) => {
 
 export const createTicket = async (req, res) => {
   try {
-    const { title, description, submitter, submitterName, assigned, assignedName, category, projectId } = req.body;
+    const { title, description, submitter, submitterName, assigned, assignedName, category, priority, projectId } =
+      req.body;
 
     const project = await Project.findById(projectId);
     const currentDate = new Date().toISOString();
@@ -43,6 +45,7 @@ export const createTicket = async (req, res) => {
       category,
       notes: [],
       status: 'OPEN',
+      priority: priority ? priority : 'LOW',
       history: [],
       project: projectId,
     });
@@ -116,10 +119,10 @@ export const getAssigned = async (req, res) => {
 export const updateTicket = async (req, res) => {
   try {
     const { ticketId } = req.params;
-    const { title, description, category, submittedDate, assigned, assignedName, status, project } = req.body;
+    const { title, description, category, submittedDate, assigned, assignedName, status, priority, project } = req.body;
     const ticket = await Ticket.findByIdAndUpdate(
       ticketId,
-      { $set: { title, description, category, submittedDate, assigned, assignedName, status, project } },
+      { $set: { title, description, category, submittedDate, assigned, assignedName, status, priority, project } },
       { new: true }
     );
     updateHistory(ticket, 'Edited');

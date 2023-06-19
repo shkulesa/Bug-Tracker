@@ -154,6 +154,7 @@ const Form = () => {
                 {isLogin ? 'LOGIN' : 'REGISTER'}
               </Button>
               <Typography
+                fontWeight='bold'
                 onClick={() => {
                   setPageType(isLogin ? 'REGISTER' : 'LOGIN');
                   resetForm();
@@ -184,7 +185,7 @@ const Form = () => {
                 mb='-1rem'
                 sx={{ color: palette.neutral.medium, fontSize: '12px' }}
               >
-                Note: Render.com takes a few seconds on initial load
+                Note: Render.com takes a minute on initial load
               </Typography>
             </Box>
           </form>

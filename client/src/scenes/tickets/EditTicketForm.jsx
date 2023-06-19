@@ -14,6 +14,7 @@ const ticketSchema = yup.object().shape({
   category: yup.string().required('required'),
   project: yup.string().required('required'),
   assignedId: yup.string().required('required'),
+  priority: yup.string(),
   status: yup.string(),
 });
 
@@ -35,6 +36,7 @@ const EditTicketForm = () => {
     category: ticket.category,
     project: ticket.project,
     assignedId: assigned._id,
+    priority: ticket.priority,
     status: ticket.status,
   };
 
@@ -43,7 +45,7 @@ const EditTicketForm = () => {
     getUsers();
   }, []);
 
-  const updateProject = async (values, onSubmitProps) => {
+  const updateTicket = async (values, onSubmitProps) => {
     const response = await fetch(`${apiURL}/tickets/${ticket._id}/update`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
@@ -65,7 +67,7 @@ const EditTicketForm = () => {
     finalValues.assignedName = assignedUser.firstName + ' ' + assignedUser.lastName;
     delete finalValues.assignedId;
 
-    await updateProject(finalValues, onSubmitProps);
+    await updateTicket(finalValues, onSubmitProps);
   };
 
   const getTicket = async () => {
@@ -191,6 +193,22 @@ const EditTicketForm = () => {
                         </MenuItem>
                       );
                     })}
+                  </Select>
+                </FormControl>
+                <FormControl>
+                  <InputLabel id='priority-label'>Priority</InputLabel>
+                  <Select
+                    fullWidth
+                    sx={{ gridColumn: 'span 1' }}
+                    value={values.priority}
+                    onChange={handleChange}
+                    labelId='priority-label'
+                    label='Priority'
+                    name='priority'
+                  >
+                    <MenuItem value='HIGH'>HIGH</MenuItem>
+                    <MenuItem value='MEDIUM'>MEDIUM</MenuItem>
+                    <MenuItem value='LOW'>LOW</MenuItem>
                   </Select>
                 </FormControl>
                 <FormControl>

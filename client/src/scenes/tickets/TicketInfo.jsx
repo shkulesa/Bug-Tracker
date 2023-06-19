@@ -22,7 +22,7 @@ const TicketInfo = () => {
   const notes = useSelector((state) => state.content.notes);
   const [correctedTime, setCorrectedTime] = useState('');
   const [projectName, setProjectName] = useState('');
-  const isDev = user.role !== 'SUBMITTER' && user.tickets.includes(id);
+  const isDev = user.role !== 'SUBMITTER' && (user.role == 'ADMIN' || user.tickets.includes(id));
   const apiURL = process.env.REACT_APP_API_BASE_URL;
 
   const getTicket = async () => {
@@ -184,7 +184,7 @@ const TicketInfo = () => {
                   fontWeight='bold'
                   color={palette.neutral.main}
                 >
-                  Category
+                  Priority
                 </Typography>
               </Box>
               <Box
@@ -273,12 +273,19 @@ const TicketInfo = () => {
                   textAlign='center'
                 >
                   <Typography
-                    textAlign='center'
                     variant='h3'
                     fontWeight='bold'
-                    color={palette.primary.main}
+                    color={
+                      ticket
+                        ? ticket.priority === 'HIGH'
+                          ? palette.priority.high
+                          : ticket.priority === 'MEDIUM'
+                          ? palette.priority.medium
+                          : palette.priority.low
+                        : palette.primary.main
+                    }
                   >
-                    {ticket.category}
+                    {ticket && ticket.priority}
                   </Typography>
                 </Box>
                 <Box
@@ -372,8 +379,8 @@ const TicketInfo = () => {
               </Typography>
               <Typography
                 variant='h4'
-                fontWeight='bold'
-                color={palette.primary.main}
+                fontWeight='500'
+                color={palette.neutral.dark}
               >
                 {ticket && ticket.description}
               </Typography>

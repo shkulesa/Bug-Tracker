@@ -275,7 +275,7 @@ const Dashboard = () => {
               fontWeight='bold'
               pl='1rem'
             >
-              Tickets By Status
+              Tickets by Status
             </Typography>
             {tickets.length === 0 ? <Box height='400px'>No tickets</Box> : <PieChart data={statusTicketData} />}
           </Paper>
@@ -292,7 +292,7 @@ const Dashboard = () => {
               fontWeight='bold'
               pl='1rem'
             >
-              Tickets By Category
+              Tickets by Category
             </Typography>
             {tickets.length === 0 ? <Box height='400px'>No tickets</Box> : <PieChart data={categoryTicketData} />}
           </Paper>
@@ -310,7 +310,7 @@ const Dashboard = () => {
                 fontWeight='bold'
                 pl='1rem'
               >
-                Projects By Priority
+                Projects by Priority
               </Typography>
               {projects.length === 0 ? <Box height='100%'>'No projects'</Box> : <PieChart data={priorityProjectData} />}
             </Paper>

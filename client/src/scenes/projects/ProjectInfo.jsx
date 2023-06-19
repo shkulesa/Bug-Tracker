@@ -182,9 +182,9 @@ const ProjectInfo = () => {
                   Project Description
                 </Typography>
                 <Typography
-                  variant='h3'
-                  fontWeight='bold'
-                  color={palette.primary.main}
+                  variant='h4'
+                  fontWeight='600'
+                  color={palette.neutral.dark}
                 >
                   {project && project.description}
                 </Typography>
@@ -200,7 +200,7 @@ const ProjectInfo = () => {
                 <Typography
                   variant='h3'
                   fontWeight='bold'
-                  color={palette.primary.main}
+                  color={palette.neutral.dark}
                 >
                   {project && project.startDate.split('T')[0]}
                 </Typography>
@@ -216,7 +216,7 @@ const ProjectInfo = () => {
                 <Typography
                   variant='h3'
                   fontWeight='bold'
-                  color={palette.primary.main}
+                  color={palette.neutral.dark}
                 >
                   {project && project.endDate.split('T')[0]}
                 </Typography>

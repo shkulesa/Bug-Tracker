@@ -33,7 +33,7 @@ const NewProjectForm = () => {
     title: '',
     description: '',
     endDate: currentDate,
-    priority: 'HIGH',
+    priority: 'LOW',
     teamUsers: [],
     managersUsers: [],
   };

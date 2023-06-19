@@ -186,6 +186,27 @@ const TicketsTable = ({ isDashboard = false }) => {
           },
         },
         {
+          field: 'priority',
+          headerName: 'Priority',
+          flex: 0.25,
+          renderCell: ({ row: { priority } }) => {
+            return (
+              <Typography
+                color={
+                  priority === 'HIGH'
+                    ? palette.priority.high
+                    : priority === 'MEDIUM'
+                    ? palette.priority.medium
+                    : palette.priority.low
+                }
+                fontWeight='600'
+              >
+                {priority}
+              </Typography>
+            );
+          },
+        },
+        {
           field: 'details',
           headerName: 'Details',
           flex: 0.3,

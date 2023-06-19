@@ -6,6 +6,7 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import ConstructionOutlinedIcon from '@mui/icons-material/ConstructionOutlined';
 import DoneOutlineOutlinedIcon from '@mui/icons-material/DoneOutlineOutlined';
 import { useNavigate } from 'react-router-dom';
+import { Palette } from '@mui/icons-material';
 
 const ProjectTickets = ({ tickets }) => {
   const { palette } = useTheme();
@@ -70,9 +71,29 @@ const ProjectTickets = ({ tickets }) => {
       },
     },
     {
+      field: 'priority',
+      headerName: 'Priority',
+      flex: 0.25,
+      renderCell: ({ row: { priority } }) => {
+        return (
+          <Typography
+            color={
+              priority === 'HIGH'
+                ? palette.priority.high
+                : priority === 'MEDIUM'
+                ? palette.priority.medium
+                : palette.priority.low
+            }
+          >
+            {priority}
+          </Typography>
+        );
+      },
+    },
+    {
       field: 'details',
       headerName: 'More',
-      flex: 0.3,
+      flex: 0.15,
       renderCell: ({ row: ticket }) => {
         return (
           <Box>
