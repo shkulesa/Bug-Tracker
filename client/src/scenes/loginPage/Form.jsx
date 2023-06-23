@@ -1,10 +1,12 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Box, Button, TextField, useMediaQuery, Typography, useTheme } from '@mui/material';
 import { Formik } from 'formik';
 import * as yup from 'yup';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { setLogin } from 'state';
+import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
+import CheckCircleOutlinedIcon from '@mui/icons-material/CheckCircleOutlined';
 
 const registerSchema = yup.object().shape({
   firstName: yup.string().required('required'),
@@ -32,6 +34,7 @@ const loginInitialValues = {
 
 const Form = () => {
   const [pageType, setPageType] = useState('LOGIN');
+  const [connectionStatus, setConnectionStatus] = useState('Wating for render.com...');
   const { palette } = useTheme();
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -77,6 +80,17 @@ const Form = () => {
 
     if (savedUser) setPageType('LOGIN');
   };
+
+  const pingBackend = async () => {
+    const response = await fetch(apiURL, { mode: 'no-cors' });
+    if (response.status === 0) {
+      setConnectionStatus('Connected');
+    }
+  };
+
+  useEffect(() => {
+    pingBackend();
+  });
 
   return (
     <Formik
@@ -180,13 +194,26 @@ const Form = () => {
                   Click here to view the app on a demo account
                 </Typography>
               )}
-              <Typography
-                mt='.5rem'
-                mb='-1rem'
-                sx={{ color: palette.neutral.medium, fontSize: '12px' }}
-              >
-                Note: Render.com takes a minute on initial load
-              </Typography>
+              <Box>
+                <Typography
+                  mt='.5rem'
+                  mb='-1rem'
+                  sx={{ color: palette.neutral.medium, fontSize: '12px' }}
+                >
+                  Note: Render.com takes a minute on initial load
+                </Typography>
+                <Box
+                  mt='1.5rem'
+                  display='flex'
+                >
+                  {connectionStatus === 'Wating for render.com...' ? (
+                    <CancelOutlinedIcon sx={{ color: 'red' }} />
+                  ) : (
+                    <CheckCircleOutlinedIcon sx={{ color: 'green' }} />
+                  )}
+                  <Typography ml='.5rem'>{connectionStatus}</Typography>
+                </Box>
+              </Box>
             </Box>
           </form>
         );
