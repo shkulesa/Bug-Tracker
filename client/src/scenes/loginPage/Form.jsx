@@ -83,6 +83,7 @@ const Form = () => {
 
   const pingBackend = async () => {
     const response = await fetch(apiURL, { mode: 'no-cors' });
+    console.log('Pinged backend. Waiting on response...');
     if (response.status === 0) {
       setConnectionStatus('Connected');
     }
@@ -200,7 +201,7 @@ const Form = () => {
                   mb='-1rem'
                   sx={{ color: palette.neutral.medium, fontSize: '12px' }}
                 >
-                  Note: Render.com takes a minute on initial load
+                  Note: Render.com takes a minute to load when first accessing the site
                 </Typography>
                 <Box
                   mt='1.5rem'
