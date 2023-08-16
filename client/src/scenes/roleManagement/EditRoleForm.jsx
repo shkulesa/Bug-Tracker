@@ -9,8 +9,8 @@ const ROLES = ['-CHOOSE A ROLE-', 'ADMIN', 'DEVELOPER', 'SUBMITTER'];
 const EditRoleForm = ({ isNonMobile }) => {
   const theme = useTheme();
   const dispatch = useDispatch();
-  const user = useSelector((state) => state.editUser);
-  const token = useSelector((state) => state.token);
+  const editUser = useSelector((state) => state.edit.user);
+  const token = useSelector((state) => state.user.token);
   const [newRole, setNewRole] = useState('-CHOOSE A ROLE-');
   const apiURL = process.env.REACT_APP_API_BASE_URL;
 
@@ -23,8 +23,8 @@ const EditRoleForm = ({ isNonMobile }) => {
   };
 
   const updateRole = async () => {
-    if (newRole && newRole !== '-CHOOSE A ROLE-' && newRole !== user.role) {
-      const response = await fetch(`${apiURL}/users/${user._id}/role`, {
+    if (newRole && newRole !== '-CHOOSE A ROLE-' && newRole !== editUser.role) {
+      const response = await fetch(`${apiURL}/users/${editUser._id}/role`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify(values),
@@ -63,7 +63,7 @@ const EditRoleForm = ({ isNonMobile }) => {
         >
           <Header
             title='EDIT ROLE'
-            subtitle={user ? user.firstName + ' ' + user.lastName : 'No user selected'}
+            subtitle={editUser ? editUser.firstName + ' ' + editUser.lastName : 'No user selected'}
           />
         </Box>
         <Box
@@ -98,7 +98,7 @@ const EditRoleForm = ({ isNonMobile }) => {
             </Select>
             <Box textAlign='center'>
               <Button
-                disabled={user === null || newRole === '-CHOOSE A ROLE-'}
+                disabled={editUser === null || newRole === '-CHOOSE A ROLE-'}
                 onClick={updateRole}
                 sx={{
                   width: isNonMobile ? '60%' : '100%',

@@ -9,34 +9,36 @@ import { setEditProject, setNotes, setProject, setProjectTeam, setProjectTickets
 import ProjectNotes from './ProjectNotes';
 import ProjectTeam from './ProjectTeam';
 import ProjectTickets from './ProjectTickets';
+import useFetchProjectInfo from 'api/useFetchProjectInfo';
 
 const ProjectInfo = () => {
   const { palette } = useTheme();
   const { id } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const token = useSelector((state) => state.token);
-  const user = useSelector((state) => state.user);
-  const project = useSelector((state) => state.content.project);
+  const token = useSelector((state) => state.user.token);
+  const user = useSelector((state) => state.user.user);
+  const project = useSelector((state) => state.project.project);
   const team = useSelector((state) => state.project.team);
   const tickets = useSelector((state) => state.project.tickets);
-  const notes = useSelector((state) => state.content.notes);
+  const notes = useSelector((state) => state.project.notes);
   const apiURL = process.env.REACT_APP_API_BASE_URL;
+  const { fetchProject, fetchTeamMembers } = useFetchProjectInfo();
 
   const [managers, setManagers] = useState([]);
   const isManager = managers.includes(user._id);
 
-  const getProject = async () => {
-    const response = await fetch(`${apiURL}/projects/${id}`, {
-      method: 'GET',
-      headers: { Authorization: `Bearer ${token}` },
-    });
+  // const getProject = async () => {
+  //   const response = await fetch(`${apiURL}/projects/${id}`, {
+  //     method: 'GET',
+  //     headers: { Authorization: `Bearer ${token}` },
+  //   });
 
-    const project = await response.json();
+  //   const project = await response.json();
 
-    dispatch(setProject({ project: project }));
-    return project;
-  };
+  //   dispatch(setProject({ project: project }));
+  //   return project;
+  // };
 
   const getTeamMembers = async () => {
     const response = await fetch(`${apiURL}/projects/${id}/team`, {
@@ -80,7 +82,7 @@ const ProjectInfo = () => {
   };
 
   useEffect(() => {
-    getProject()
+    fetchProject()
       .then(({ managers }) => {
         setManagers(managers);
         getTeamMembers();

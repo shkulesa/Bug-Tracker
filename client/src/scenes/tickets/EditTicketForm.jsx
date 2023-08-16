@@ -23,21 +23,21 @@ const EditTicketForm = () => {
   const dispatch = useDispatch();
   const { palette } = useTheme();
   const { id } = useParams();
-  const users = useSelector((state) => state.content.users);
-  const token = useSelector((state) => state.token);
-  const ticket = useSelector((state) => state.editTicket);
+  const users = useSelector((state) => state.user.users);
+  const token = useSelector((state) => state.user.token);
+  const editTicket = useSelector((state) => state.edit.ticket);
   const assigned = useSelector((state) => state.ticket.assigned);
-  const projects = useSelector((state) => state.content.projects);
+  const projects = useSelector((state) => state.user.projects);
   const apiURL = process.env.REACT_APP_API_BASE_URL;
 
   const initialValues = {
-    title: ticket.title,
-    description: ticket.description,
-    category: ticket.category,
-    project: ticket.project,
+    title: editTicket.title,
+    description: editTicket.description,
+    category: editTicket.category,
+    project: editTicket.project,
     assignedId: assigned._id,
-    priority: ticket.priority,
-    status: ticket.status,
+    priority: editTicket.priority,
+    status: editTicket.status,
   };
 
   useEffect(() => {
@@ -46,7 +46,7 @@ const EditTicketForm = () => {
   }, []);
 
   const updateTicket = async (values, onSubmitProps) => {
-    const response = await fetch(`${apiURL}/tickets/${ticket._id}/update`, {
+    const response = await fetch(`${apiURL}/tickets/${editTicket._id}/update`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
       body: JSON.stringify(values),
@@ -78,6 +78,7 @@ const EditTicketForm = () => {
 
     const ticket = await response.json();
 
+    //editTicket?
     dispatch(setTicket({ ticket: ticket }));
     return ticket;
   };
@@ -101,7 +102,7 @@ const EditTicketForm = () => {
         <Box>
           <Header
             title='Edit Ticket'
-            subtitle={ticket.title}
+            subtitle={editTicket.title}
           />
         </Box>
         <Box>
@@ -114,7 +115,7 @@ const EditTicketForm = () => {
               '&:hover': { color: palette.primary.main },
             }}
             onClick={() => {
-              navigate(`/tickets/info/${ticket._id}`);
+              navigate(`/tickets/info/${editTicket._id}`);
             }}
           >
             Ticket Details

@@ -11,12 +11,6 @@ import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined
 const ProjectUsersTable = ({ team, project }) => {
   const { palette } = useTheme();
   const [managers, setManagers] = useState([]);
-  // const { team, managers } = useSelector((state) => state.editProject);
-  // const team = useSelector((state) => state.project.team);
-  // const { managers } = useSelector((state) => state.content.project);
-  // console.log(team);
-  // console.log(managers);
-  // console.log(rows)
 
   useEffect(() => {
     setManagers(project.managers);

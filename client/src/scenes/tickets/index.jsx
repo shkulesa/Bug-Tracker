@@ -7,7 +7,7 @@ import TicketsTable from './TicketsTable';
 const Tickets = () => {
   const { palette } = useTheme();
   const navigate = useNavigate();
-  const user = useSelector((state) => state.user);
+  const user = useSelector((state) => state.user.user);
 
   return (
     <Box

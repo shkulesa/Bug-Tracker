@@ -14,9 +14,9 @@ const TicketsTable = ({ isDashboard = false }) => {
   const { palette } = useTheme();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const token = useSelector((state) => state.token);
-  const user = useSelector((state) => state.user);
-  const tickets = useSelector((state) => state.content.tickets);
+  const token = useSelector((state) => state.user.token);
+  const user = useSelector((state) => state.user.user);
+  const tickets = useSelector((state) => state.user.tickets);
   const [isLoading, setIsLoading] = useState(true);
   const apiURL = process.env.REACT_APP_API_BASE_URL;
 

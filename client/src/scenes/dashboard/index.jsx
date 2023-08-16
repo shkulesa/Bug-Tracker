@@ -14,10 +14,10 @@ const Dashboard = () => {
   const { palette } = useTheme();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const user = useSelector((state) => state.user);
-  const token = useSelector((state) => state.token);
-  const tickets = useSelector((state) => state.content.tickets);
-  const projects = useSelector((state) => state.content.projects);
+  const user = useSelector((state) => state.user.user);
+  const token = useSelector((state) => state.user.token);
+  const tickets = useSelector((state) => state.user.tickets);
+  const projects = useSelector((state) => state.user.projects);
   const [statusTicketData, setStatusTicketData] = useState([]);
   const [categoryTicketData, setCategoryTicketData] = useState([]);
   const [priorityProjectData, setPriorityProjectData] = useState([]);

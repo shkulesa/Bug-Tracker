@@ -4,12 +4,12 @@ import CustomGridToolbar from 'components/CustomGridToolbar';
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';
-import { removeNote } from 'state';
+import { removeProjectNote } from 'state/slices/projectSlice';
 
 const ProjectNotes = ({ notes, isManager }) => {
   const dispatch = useDispatch();
-  const token = useSelector((state) => state.token);
-  const user = useSelector((state) => state.user);
+  const token = useSelector((state) => state.user.token);
+  const user = useSelector((state) => state.user.user);
   const apiURL = process.env.REACT_APP_API_BASE_URL;
 
   const deleteNote = async (id) => {
@@ -18,7 +18,7 @@ const ProjectNotes = ({ notes, isManager }) => {
       headers: { Authorization: `Bearer ${token}` },
     });
 
-    dispatch(removeNote({ note: id }));
+    dispatch(removeProjectNote({ note: id }));
   };
 
   const columns =

@@ -24,9 +24,9 @@ const NewProjectForm = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { palette } = useTheme();
-  const users = useSelector((state) => state.content.users);
-  const token = useSelector((state) => state.token);
-  const user = useSelector((state) => state.user);
+  const users = useSelector((state) => state.user.users);
+  const token = useSelector((state) => state.user.token);
+  const user = useSelector((state) => state.user.user);
   const apiURL = process.env.REACT_APP_API_BASE_URL;
 
   const initialValues = {

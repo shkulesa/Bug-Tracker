@@ -11,7 +11,7 @@ import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined
 const TicketAssigned = ({ assigned }) => {
   const { palette } = useTheme();
   const dispatch = useDispatch();
-  const token = useSelector((state) => state.token);
+  const token = useSelector((state) => state.user.token);
 
   const columns = [
     {

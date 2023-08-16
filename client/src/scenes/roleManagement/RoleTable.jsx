@@ -13,9 +13,9 @@ const RoleTable = () => {
   const theme = useTheme();
   const dispatch = useDispatch();
 
-  const { role } = useSelector((state) => state.user);
-  const token = useSelector((state) => state.token);
-  const users = useSelector((state) => state.content.users);
+  const { role } = useSelector((state) => state.user.user);
+  const token = useSelector((state) => state.user.token);
+  const users = useSelector((state) => state.user.users);
   const [isLoading, setIsLoading] = useState(true);
   const apiURL = process.env.REACT_APP_API_BASE_URL;
 

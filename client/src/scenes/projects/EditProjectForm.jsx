@@ -21,20 +21,20 @@ const EditProjectForm = () => {
   const dispatch = useDispatch();
   const { palette } = useTheme();
   const { id } = useParams();
-  const token = useSelector((state) => state.token);
-  const project = useSelector((state) => state.editProject);
+  const token = useSelector((state) => state.user.token);
+  const editProject = useSelector((state) => state.edit.project);
   const apiURL = process.env.REACT_APP_API_BASE_URL;
 
   const initialValues = {
-    title: project.title,
-    description: project.description,
-    priority: project.priority,
+    title: editProject.title,
+    description: editProject.description,
+    priority: editProject.priority,
   };
 
   useEffect(() => {
     getProject().then(() => {
-      initialValues.startDate = correctDate(project.startDate);
-      initialValues.endDate = correctDate(project.endDate);
+      initialValues.startDate = correctDate(editProject.startDate);
+      initialValues.endDate = correctDate(editProject.endDate);
     });
   }, []);
 
@@ -44,7 +44,7 @@ const EditProjectForm = () => {
   };
 
   const updateProject = async (values, onSubmitProps) => {
-    const response = await fetch(`${apiURL}/projects/${project._id}/update`, {
+    const response = await fetch(`${apiURL}/projects/${editProject._id}/update`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
       body: JSON.stringify(values),
@@ -76,8 +76,8 @@ const EditProjectForm = () => {
 
     const project = await response.json();
 
-    dispatch(setEditProject({ editProject: project }));
-    return project;
+    dispatch(setEditProject({ editProject: editProject }));
+    // return editProject;
   };
 
   return (
@@ -89,7 +89,7 @@ const EditProjectForm = () => {
         <Box>
           <Header
             title='Edit Project'
-            subtitle={project.title}
+            subtitle={editProject.title}
           />
         </Box>
         <Box>
@@ -102,7 +102,7 @@ const EditProjectForm = () => {
               '&:hover': { color: palette.primary.main },
             }}
             onClick={() => {
-              navigate(`/projects/info/${project._id}`);
+              navigate(`/projects/info/${editProject._id}`);
             }}
           >
             Project Details

@@ -16,10 +16,10 @@ const TicketInfo = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const token = useSelector((state) => state.token);
-  const user = useSelector((state) => state.user);
-  const ticket = useSelector((state) => state.content.ticket);
-  const notes = useSelector((state) => state.content.notes);
+  const token = useSelector((state) => state.user.token);
+  const user = useSelector((state) => state.user.user);
+  const ticket = useSelector((state) => state.ticket.ticket);
+  const notes = useSelector((state) => state.ticket.notes);
   const [correctedTime, setCorrectedTime] = useState('');
   const [projectName, setProjectName] = useState('');
   const isDev = user.role !== 'SUBMITTER' && (user.role == 'ADMIN' || user.tickets.includes(id));

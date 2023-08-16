@@ -30,10 +30,10 @@ const NewTicketForm = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { palette } = useTheme();
-  const users = useSelector((state) => state.content.users);
-  const projects = useSelector((state) => state.content.projects);
-  const token = useSelector((state) => state.token);
-  const user = useSelector((state) => state.user);
+  const users = useSelector((state) => state.user.users);
+  const projects = useSelector((state) => state.user.projects);
+  const token = useSelector((state) => state.user.token);
+  const user = useSelector((state) => state.user.user);
   const { projectId } = useParams();
   const hasProject = projectId !== undefined && projectId !== 'none';
   const apiURL = process.env.REACT_APP_API_BASE_URL;

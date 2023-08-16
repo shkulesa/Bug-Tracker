@@ -2,7 +2,8 @@ import { Box, Button, TextField, useTheme } from '@mui/material';
 import { Formik } from 'formik';
 import * as yup from 'yup';
 import { useDispatch, useSelector } from 'react-redux';
-import { addNote } from 'state';
+import { addTicketNote } from 'state/slices/ticketSlice';
+import { addProjectNote } from 'state/slices/projectSlice';
 
 const noteSchema = yup.object().shape({
   content: yup.string().required('required'),
@@ -11,8 +12,8 @@ const noteSchema = yup.object().shape({
 const NewNoteForm = ({ kind, parent }) => {
   const dispatch = useDispatch();
   const { palette } = useTheme();
-  const token = useSelector((state) => state.token);
-  const user = useSelector((state) => state.user);
+  const token = useSelector((state) => state.user.token);
+  const user = useSelector((state) => state.user.user);
   const apiURL = process.env.REACT_APP_API_BASE_URL;
 
   const initialValues = {
@@ -32,7 +33,11 @@ const NewNoteForm = ({ kind, parent }) => {
       if (newNote) {
         console.log('!');
         onSubmitProps.resetForm();
-        dispatch(addNote({ note: newNote }));
+        if (kind === 'TICKET') {
+          dispatch(addTicketNote({ note: newNote }));
+        } else {
+          dispatch(addProjectNote({ note: newNote }));
+        }
       }
     }
   };

@@ -4,18 +4,19 @@ import Header from 'components/Header';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { setUsers, setEditUser, updateProject, setProjectTeam, setEditProject } from 'state';
 import ProjectUsersTable from './ProjectUsersTable';
+import { setEditProject, setEditProjectUser, setEditTeam } from 'state/slices/editSlice';
+import { setUsers, updateProjects } from 'state/slices/userSlice';
 
 const ProjectUsersForm = ({ linkToProject = true }) => {
   const { palette } = useTheme();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const user = useSelector((state) => state.user);
-  const users = useSelector((state) => state.content.users);
-  const token = useSelector((state) => state.token);
-  const project = useSelector((state) => state.editProject);
-  const team = useSelector((state) => state.project.team);
+  const user = useSelector((state) => state.user.user);
+  const users = useSelector((state) => state.user.users);
+  const token = useSelector((state) => state.user.token);
+  const project = useSelector((state) => state.edit.project);
+  const team = useSelector((state) => state.edit.team);
   const [projectUserId, setProjectUserId] = useState('-CHOOSE A USER-');
   const [currentProject, setCurrentProject] = useState(null);
   const [currentTeam, setCurrentTeam] = useState(null);
@@ -44,7 +45,7 @@ const ProjectUsersForm = ({ linkToProject = true }) => {
     });
     const team = await response.json();
 
-    dispatch(setProjectTeam({ team: team }));
+    dispatch(setEditTeam({ team: team }));
   };
 
   const handleChange = (event) => {
@@ -60,18 +61,18 @@ const ProjectUsersForm = ({ linkToProject = true }) => {
       });
       const updatedProject = await response.json();
       dispatch(
-        updateProject({
+        updateProjects({
           updatedProject: updatedProject.project,
         })
       );
       dispatch(
         setEditProject({
-          editProject: updateProject.project,
+          editProject: updatedProject.project,
         })
       );
       dispatch(
-        setEditUser({
-          user: updatedProject.user,
+        setEditProjectUser({
+          projectUser: updatedProject.user,
         })
       );
 
@@ -90,7 +91,7 @@ const ProjectUsersForm = ({ linkToProject = true }) => {
       });
       const updatedProject = await response.json();
       dispatch(
-        updateProject({
+        updateProjects({
           updatedProject: updatedProject,
         })
       );

@@ -1,7 +1,6 @@
 import { Box, Button, IconButton, Typography, useTheme } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import { useDispatch, useSelector } from 'react-redux';
-import { setEditProject, setProjects, setProjectTeam } from 'state';
 import { useEffect, useState } from 'react';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import PriorityHighOutlinedIcon from '@mui/icons-material/PriorityHighOutlined';
@@ -10,35 +9,45 @@ import KeyboardArrowUpOutlinedIcon from '@mui/icons-material/KeyboardArrowUpOutl
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import CustomGridToolbar from 'components/CustomGridToolbar';
 import { useNavigate } from 'react-router-dom';
+import useFetchProjects from 'api/useFetchProjects';
+import useFetchProjectInfo from 'api/useFetchProjectInfo';
+import { setEditProject, setEditTeam } from 'state/slices/editSlice';
 
 const ProjectsTable = ({ page, project }) => {
   const theme = useTheme();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const token = useSelector((state) => state.token);
-  const user = useSelector((state) => state.user);
-  const projects = useSelector((state) => state.content.projects);
+  const token = useSelector((state) => state.user.token);
+  const user = useSelector((state) => state.user.user);
+  const projects = useSelector((state) => state.user.projects);
+  const editProject = useSelector((state) => state.edit.project);
   const [isLoading, setIsLoading] = useState(true);
   const apiURL = process.env.REACT_APP_API_BASE_URL;
+  const { fetchProjects, fetchManagedProjects } = useFetchProjects();
+  const fetchTeamMembers = useFetchProjectInfo();
 
   const priorityComparator = (a, b) => {
     const priorities = { LOW: 0, MEDIUM: 1, HIGH: 2 };
     return priorities[b] - priorities[a];
   };
 
+  const commonColumns = [
+    {
+      field: 'title',
+      headerName: 'Title',
+      flex: 0.5,
+    },
+    {
+      field: 'description',
+      headerName: 'Description',
+      flex: 0.75,
+    },
+  ];
+
   const columns =
     page === 'PROJECTS'
       ? [
-          {
-            field: 'title',
-            headerName: 'Title',
-            flex: 0.5,
-          },
-          {
-            field: 'description',
-            headerName: 'Description',
-            flex: 0.75,
-          },
+          ...commonColumns,
           {
             field: 'startDate',
             headerName: 'Start date',
@@ -101,8 +110,6 @@ const ProjectsTable = ({ page, project }) => {
                   <IconButton
                     variant='outlined'
                     onClick={() => {
-                      // console.log('PROJECT: ');
-                      // console.log(project);
                       navigate(`/projects/info/${project._id}`);
                     }}
                   >
@@ -115,16 +122,7 @@ const ProjectsTable = ({ page, project }) => {
         ]
       : page === 'DASHBOARD'
       ? [
-          {
-            field: 'title',
-            headerName: 'Title',
-            flex: 0.5,
-          },
-          {
-            field: 'description',
-            headerName: 'Description',
-            flex: 0.75,
-          },
+          ...commonColumns,
           {
             field: 'priority',
             headerName: 'Priority',
@@ -171,8 +169,6 @@ const ProjectsTable = ({ page, project }) => {
                   <IconButton
                     variant='outlined'
                     onClick={() => {
-                      console.log('PROJECT: ');
-                      console.log(project);
                       navigate(`/projects/info/${project._id}`);
                     }}
                   >
@@ -184,16 +180,7 @@ const ProjectsTable = ({ page, project }) => {
           },
         ]
       : [
-          {
-            field: 'title',
-            headerName: 'Title',
-            flex: 0.5,
-          },
-          {
-            field: 'description',
-            headerName: 'Description',
-            flex: 0.75,
-          },
+          ...commonColumns,
           {
             field: 'edit',
             headerName: 'Select',
@@ -204,8 +191,6 @@ const ProjectsTable = ({ page, project }) => {
                   <Button
                     variant='outlined'
                     onClick={() => {
-                      console.log('PROJECT: ');
-                      console.log(project);
                       handleEditProjectUsers(project);
                     }}
                   >
@@ -217,50 +202,36 @@ const ProjectsTable = ({ page, project }) => {
           },
         ];
 
-  const getProjects = async () => {
-    const url =
-      user.role === 'ADMIN' || user.role === 'VIEWER'
-        ? `${apiURL}/projects/all`
-        : `${apiURL}/users/${user._id}/projects`;
+  // const getProjects = async () => {
+  //   const url =
+  //     user.role === 'ADMIN' || user.role === 'VIEWER'
+  //       ? `${apiURL}/projects/all`
+  //       : `${apiURL}/users/${user._id}/projects`;
 
-    const response = await fetch(url, {
-      method: 'GET',
-      headers: { Authorization: `Bearer ${token}` },
-    });
+  //   const response = await fetch(url, {
+  //     method: 'GET',
+  //     headers: { Authorization: `Bearer ${token}` },
+  //   });
 
-    let userProjects;
-    if (page === 'USERS' && user.role === 'DEVELOPER') {
-      const allProjects = response.status === 404 ? [] : await response.json();
-      userProjects = allProjects.filter(({ managers }) => managers.includes(user._id));
-    } else {
-      userProjects = response.status === 404 ? [] : await response.json();
-    }
+  //   let userProjects;
+  //   if (page === 'USERS' && user.role === 'DEVELOPER') {
+  //     const allProjects = response.status === 404 ? [] : await response.json();
+  //     userProjects = allProjects.filter(({ managers }) => managers.includes(user._id));
+  //   } else {
+  //     userProjects = response.status === 404 ? [] : await response.json();
+  //   }
 
-    dispatch(setProjects({ projects: userProjects }));
-  };
-
-  const getTeamMembers = async (projectId) => {
-    const response = await fetch(`${apiURL}/projects/${projectId}/team`, {
-      method: 'GET',
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    const team = await response.json();
-
-    dispatch(setProjectTeam({ team: team }));
-  };
-
-  const handleEditProjectUsers = (project) => {
-    dispatch(
-      setEditProject({
-        editProject: project,
-      })
-    );
-    console.log(project._id);
-    getTeamMembers(project._id);
-  };
+  //   dispatch(setProjects({ projects: userProjects }));
+  // };
 
   useEffect(() => {
-    getProjects();
+    //update state with appropriate projects
+    if (page === 'PROJECTS' || page === 'DASHBOARD') {
+      fetchProjects(user, token);
+    } else {
+      fetchManagedProjects(user, token);
+    }
+
     setIsLoading(false);
     if (!project) {
       dispatch(
@@ -269,12 +240,33 @@ const ProjectsTable = ({ page, project }) => {
         })
       );
       dispatch(
-        setProjectTeam({
+        setEditTeam({
           team: null,
         })
       );
     }
   }, []);
+
+  //Project Users Logic
+  // const getTeamMembers = async (projectId) => {
+  //   const response = await fetch(`${apiURL}/projects/${projectId}/team`, {
+  //     method: 'GET',
+  //     headers: { Authorization: `Bearer ${token}` },
+  //   });
+  //   const team = await response.json();
+
+  //   dispatch(setProjectTeam({ team: team }));
+  // };
+
+  const handleEditProjectUsers = (editProject) => {
+    dispatch(
+      setEditProject({
+        editProject: editProject,
+      })
+    );
+    console.log(editProject._id);
+    fetchTeamMembers(editProject._id, token);
+  };
 
   return (
     <Box
