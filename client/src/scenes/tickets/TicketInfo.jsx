@@ -5,11 +5,13 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import NewNoteForm from 'scenes/notes/NewNoteForm';
-import { setEditTicket, setNotes, setTicket, setTicketAssigned } from 'state';
 import LockOpenOutlinedIcon from '@mui/icons-material/LockOpenOutlined';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import TicketNotes from './TicketNotes';
 import TicketHistory from './TicketHistory';
+import useFetchProjectInfo from 'api/useFetchProjectInfo';
+import useFetchTicketInfo from 'api/useFetchTicketInfo';
+import { setEditTicket } from 'state/slices/editSlice';
 
 const TicketInfo = () => {
   const { palette } = useTheme();
@@ -23,81 +25,20 @@ const TicketInfo = () => {
   const [correctedTime, setCorrectedTime] = useState('');
   const [projectName, setProjectName] = useState('');
   const isDev = user.role !== 'SUBMITTER' && (user.role == 'ADMIN' || user.tickets.includes(id));
-  const apiURL = process.env.REACT_APP_API_BASE_URL;
+  const { fetchTicket, fetchTicketNotes, fetchTicketAssigned, updateTicketStatus, deleteTicket } = useFetchTicketInfo();
+  const { fetchProject } = useFetchProjectInfo();
 
-  const getTicket = async () => {
-    const response = await fetch(`${apiURL}/tickets/${id}`, {
-      method: 'GET',
-      headers: { Authorization: `Bearer ${token}` },
-    });
-
-    const ticket = await response.json();
-
-    dispatch(setTicket({ ticket: ticket }));
-    getProjectName(ticket.project);
-    return ticket;
-  };
-
-  const getAssigned = async () => {
-    const response = await fetch(`${apiURL}/tickets/${id}/assigned`, {
-      method: 'GET',
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    const assigned = await response.json();
-
-    dispatch(setTicketAssigned({ assigned: assigned }));
-  };
-
-  const getProjectName = async (projectId) => {
-    const response = await fetch(`${apiURL}/projects/${projectId}`, {
-      method: 'GET',
-      headers: { Authorization: `Bearer ${token}` },
-    });
-
-    const project = await response.json();
-
+  const getProjectTitle = async (projectId) => {
+    const project = await fetchProject(projectId, token);
     setProjectName(project.title);
   };
 
-  const getNotes = async () => {
-    const response = await fetch(`${apiURL}/tickets/${id}/notes`, {
-      method: 'GET',
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    const notes = await response.json();
-    dispatch(setNotes({ notes: notes }));
-  };
-
-  const updateStatus = async () => {
-    const response = await fetch(`${apiURL}/tickets/${id}/status`, {
-      method: 'PATCH',
-      headers: { Authorization: `Bearer ${token}` },
-    });
-
-    const updatedTicket = await response.json();
-    dispatch(
-      setTicket({
-        ticket: updatedTicket,
-      })
-    );
-  };
-
-  const deleteTicket = async () => {
-    if (user.role === 'ADMIN') {
-      const response = await fetch(`${apiURL}/tickets/${id}`, {
-        method: 'DELETE',
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      navigate('/tickets');
-    }
-  };
-
   useEffect(() => {
-    getTicket()
-      .then(() => {
-        getNotes();
-        getAssigned();
+    fetchTicket(id, token)
+      .then((ticket) => {
+        getProjectTitle(ticket.project);
+        fetchTicketNotes(id, token);
+        fetchTicketAssigned(id, token);
         const date = new Date(ticket.submittedDate);
         setCorrectedTime(
           new Date(date.getTime() - date.getTimezoneOffset() * 60000).toISOString().split('.')[0].replace('T', ' ')
@@ -346,7 +287,9 @@ const TicketInfo = () => {
                       <Box mt='.2rem'>
                         <Button
                           variant='outlined'
-                          onClick={updateStatus}
+                          onClick={() => {
+                            updateTicketStatus(id, token);
+                          }}
                           sx={{
                             color: ticket.status === 'OPEN' ? '#FF7572' : '#55C35D',
                             borderColor: ticket.status === 'OPEN' ? '#FF7572' : '#55C35D',
@@ -456,7 +399,10 @@ const TicketInfo = () => {
                 color: palette.background.alt,
                 '&:hover': { backgroundColor: 'pink' },
               }}
-              onClick={deleteTicket}
+              onClick={async () => {
+                await deleteTicket(user, id, token);
+                navigate('/tickets');
+              }}
             >
               Delete Ticket
             </Button>

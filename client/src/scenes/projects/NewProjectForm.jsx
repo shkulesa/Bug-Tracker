@@ -3,11 +3,12 @@ import { Box, Button, TextField, useTheme, Chip, Select, MenuItem, InputLabel, F
 import { Formik } from 'formik';
 import * as yup from 'yup';
 import { useNavigate } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { setUsers } from 'state';
+import { useSelector } from 'react-redux';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import Header from 'components/Header';
+import useFetchUsers from 'api/useFetchUsers';
+import useFetchProjectInfo from 'api/useFetchProjectInfo';
 
 const projectSchema = yup.object().shape({
   title: yup.string().required('required'),
@@ -22,12 +23,12 @@ const currentDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000).
 
 const NewProjectForm = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
   const { palette } = useTheme();
   const users = useSelector((state) => state.user.users);
   const token = useSelector((state) => state.user.token);
   const user = useSelector((state) => state.user.user);
-  const apiURL = process.env.REACT_APP_API_BASE_URL;
+  const fetchUsers = useFetchUsers;
+  const { createProject } = useFetchProjectInfo();
 
   const initialValues = {
     title: '',
@@ -36,20 +37,6 @@ const NewProjectForm = () => {
     priority: 'LOW',
     teamUsers: [],
     managersUsers: [],
-  };
-
-  const createProject = async (values, onSubmitProps) => {
-    const response = await fetch(`${apiURL}/projects/create`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-      body: JSON.stringify(values),
-    });
-
-    const newProject = await response.json();
-    if (newProject) {
-      onSubmitProps.resetForm();
-      navigate(`/projects/info/${newProject}`);
-    }
   };
 
   const handleFormSubmit = async (values, onSubmitProps) => {
@@ -68,24 +55,17 @@ const NewProjectForm = () => {
     delete finalValues.teamUsers;
     delete finalValues.managersUsers;
 
+    //creation date
     const date = new Date(finalValues.endDate);
     finalValues.endDate = new Date(date.getTime() + date.getTimezoneOffset() * 60000).toISOString().split('T')[0];
 
-    await createProject(finalValues, onSubmitProps);
-  };
-
-  const getUsers = async () => {
-    const response = await fetch(`${apiURL}/users/all`, {
-      method: 'GET',
-      headers: { Authorization: `Bearer ${token}` },
-    });
-
-    const users = await response.json();
-    dispatch(setUsers({ users: users }));
+    const newProjectId = await createProject(finalValues, token);
+    onSubmitProps.resetForm();
+    navigate(`/projects/info/${newProjectId}`);
   };
 
   useEffect(() => {
-    getUsers();
+    fetchUsers(token);
   }, []);
 
   return (
@@ -101,7 +81,7 @@ const NewProjectForm = () => {
         initialValues={initialValues}
         validationSchema={projectSchema}
       >
-        {({ values, errors, touched, handleBlur, handleChange, handleSubmit, setFieldValue, resetForm }) => {
+        {({ values, errors, touched, handleBlur, handleChange, handleSubmit, setFieldValue }) => {
           return (
             <form onSubmit={handleSubmit}>
               <Box

@@ -3,10 +3,11 @@ import { Box, Button, TextField, useTheme, Select, MenuItem, InputLabel, FormCon
 import { Formik } from 'formik';
 import * as yup from 'yup';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { setTicket, setUsers } from 'state';
+import { useSelector } from 'react-redux';
 import FlexBetween from 'components/FlexBetween';
 import Header from 'components/Header';
+import useFetchTicketInfo from 'api/useFetchTicketInfo';
+import useFetchUsers from 'api/useFetchUsers';
 
 const ticketSchema = yup.object().shape({
   title: yup.string().required('required'),
@@ -20,7 +21,6 @@ const ticketSchema = yup.object().shape({
 
 const EditTicketForm = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
   const { palette } = useTheme();
   const { id } = useParams();
   const users = useSelector((state) => state.user.users);
@@ -28,7 +28,8 @@ const EditTicketForm = () => {
   const editTicket = useSelector((state) => state.edit.ticket);
   const assigned = useSelector((state) => state.ticket.assigned);
   const projects = useSelector((state) => state.user.projects);
-  const apiURL = process.env.REACT_APP_API_BASE_URL;
+  const { fetchTicket, updateTicket } = useFetchTicketInfo();
+  const fetchUsers = useFetchUsers();
 
   const initialValues = {
     title: editTicket.title,
@@ -41,23 +42,9 @@ const EditTicketForm = () => {
   };
 
   useEffect(() => {
-    getTicket();
-    getUsers();
+    fetchTicket(id, token);
+    fetchUsers(token);
   }, []);
-
-  const updateTicket = async (values, onSubmitProps) => {
-    const response = await fetch(`${apiURL}/tickets/${editTicket._id}/update`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-      body: JSON.stringify(values),
-    });
-
-    const newTicket = await response.json();
-    if (newTicket) {
-      onSubmitProps.resetForm();
-      navigate(`/tickets/info/${newTicket}`);
-    }
-  };
 
   const handleFormSubmit = async (values, onSubmitProps) => {
     const finalValues = JSON.parse(JSON.stringify(values));
@@ -67,30 +54,11 @@ const EditTicketForm = () => {
     finalValues.assignedName = assignedUser.firstName + ' ' + assignedUser.lastName;
     delete finalValues.assignedId;
 
-    await updateTicket(finalValues, onSubmitProps);
-  };
-
-  const getTicket = async () => {
-    const response = await fetch(`${apiURL}/tickets/${id}`, {
-      method: 'GET',
-      headers: { Authorization: `Bearer ${token}` },
-    });
-
-    const ticket = await response.json();
-
-    //editTicket?
-    dispatch(setTicket({ ticket: ticket }));
-    return ticket;
-  };
-
-  const getUsers = async () => {
-    const response = await fetch(`${apiURL}/users/all`, {
-      method: 'GET',
-      headers: { Authorization: `Bearer ${token}` },
-    });
-
-    const users = await response.json();
-    dispatch(setUsers({ users: users }));
+    const updatedTicket = await updateTicket(finalValues, id, token);
+    if (updatedTicket) {
+      onSubmitProps.resetForm();
+      navigate(`/tickets/info/${updatedTicket}`);
+    }
   };
 
   return (

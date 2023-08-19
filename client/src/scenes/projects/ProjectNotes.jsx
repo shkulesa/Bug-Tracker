@@ -5,21 +5,13 @@ import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';
 import { removeProjectNote } from 'state/slices/projectSlice';
+import useFetchNotes from 'api/useFetchNotes';
 
 const ProjectNotes = ({ notes, isManager }) => {
   const dispatch = useDispatch();
   const token = useSelector((state) => state.user.token);
   const user = useSelector((state) => state.user.user);
-  const apiURL = process.env.REACT_APP_API_BASE_URL;
-
-  const deleteNote = async (id) => {
-    await fetch(`${apiURL}/notes/${id}`, {
-      method: 'DELETE',
-      headers: { Authorization: `Bearer ${token}` },
-    });
-
-    dispatch(removeProjectNote({ note: id }));
-  };
+  const { deleteNote } = useFetchNotes();
 
   const columns =
     user.role === 'ADMIN' || isManager
@@ -51,10 +43,9 @@ const ProjectNotes = ({ notes, isManager }) => {
                 <Box>
                   <Button
                     variant='outlined'
-                    onClick={() => {
-                      console.log('Delete note: ');
-                      console.log(_id);
-                      deleteNote(_id);
+                    onClick={async () => {
+                      await deleteNote(_id, token);
+                      dispatch(removeProjectNote({ note: _id }));
                     }}
                     sx={{
                       color: '#FF7572',

@@ -3,12 +3,12 @@ import { Box, Button, TextField, useTheme, Select, MenuItem, InputLabel, FormCon
 import { Formik } from 'formik';
 import * as yup from 'yup';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { setEditProject } from 'state';
+import { useSelector } from 'react-redux';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import FlexBetween from 'components/FlexBetween';
 import Header from 'components/Header';
+import useFetchProjectInfo from 'api/useFetchProjectInfo';
 
 const projectSchema = yup.object().shape({
   title: yup.string().required('required'),
@@ -18,12 +18,11 @@ const projectSchema = yup.object().shape({
 
 const EditProjectForm = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
   const { palette } = useTheme();
   const { id } = useParams();
   const token = useSelector((state) => state.user.token);
   const editProject = useSelector((state) => state.edit.project);
-  const apiURL = process.env.REACT_APP_API_BASE_URL;
+  const { fetchProjectForEdit, updateProject } = useFetchProjectInfo();
 
   const initialValues = {
     title: editProject.title,
@@ -32,7 +31,7 @@ const EditProjectForm = () => {
   };
 
   useEffect(() => {
-    getProject().then(() => {
+    fetchProjectForEdit(id, token).then(() => {
       initialValues.startDate = correctDate(editProject.startDate);
       initialValues.endDate = correctDate(editProject.endDate);
     });
@@ -43,20 +42,6 @@ const EditProjectForm = () => {
     return new Date(hold.getTime() + hold.getTimezoneOffset() * 60000).toISOString();
   };
 
-  const updateProject = async (values, onSubmitProps) => {
-    const response = await fetch(`${apiURL}/projects/${editProject._id}/update`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-      body: JSON.stringify(values),
-    });
-
-    const newProject = await response.json();
-    if (newProject) {
-      onSubmitProps.resetForm();
-      navigate(`/projects/info/${newProject}`);
-    }
-  };
-
   const handleFormSubmit = async (values, onSubmitProps) => {
     const finalValues = JSON.parse(JSON.stringify(values));
 
@@ -65,19 +50,9 @@ const EditProjectForm = () => {
     finalValues.endDate = new Date(end.getTime() - end.getTimezoneOffset() * 60000).toISOString().split('T')[0];
     finalValues.startDate = new Date(start.getTime() - start.getTimezoneOffset() * 60000).toISOString().split('T')[0];
 
-    await updateProject(finalValues, onSubmitProps);
-  };
-
-  const getProject = async () => {
-    const response = await fetch(`${apiURL}/projects/${id}`, {
-      method: 'GET',
-      headers: { Authorization: `Bearer ${token}` },
-    });
-
-    const project = await response.json();
-
-    dispatch(setEditProject({ editProject: editProject }));
-    // return editProject;
+    await updateProject(finalValues, id, token);
+    onSubmitProps.resetForm();
+    navigate(`/projects/info/${id}`);
   };
 
   return (

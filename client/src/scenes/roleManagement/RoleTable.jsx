@@ -1,13 +1,14 @@
 import { Box, Button, Paper, Typography, useTheme } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import { useDispatch, useSelector } from 'react-redux';
-import { setEditUser, setUsers } from 'state';
 import { useEffect, useState } from 'react';
 import AdminPanelSettingsOutlined from '@mui/icons-material/AdminPanelSettingsOutlined';
 import EngineeringOutlinedIcon from '@mui/icons-material/EngineeringOutlined';
 import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import CustomGridToolbar from 'components/CustomGridToolbar';
+import { setEditUser } from 'state/slices/editSlice';
+import useFetchUsers from 'api/useFetchUsers';
 
 const RoleTable = () => {
   const theme = useTheme();
@@ -17,7 +18,7 @@ const RoleTable = () => {
   const token = useSelector((state) => state.user.token);
   const users = useSelector((state) => state.user.users);
   const [isLoading, setIsLoading] = useState(true);
-  const apiURL = process.env.REACT_APP_API_BASE_URL;
+  const fetchUsers = useFetchUsers();
 
   const columns = [
     {
@@ -93,18 +94,8 @@ const RoleTable = () => {
     );
   };
 
-  const getUsers = async () => {
-    const response = await fetch(`${apiURL}/users/all`, {
-      method: 'GET',
-      headers: { Authorization: `Bearer ${token}` },
-    });
-
-    const users = await response.json();
-    dispatch(setUsers({ users: users }));
-  };
-
   useEffect(() => {
-    getUsers();
+    fetchUsers(token);
     setIsLoading(false);
   }, []);
 

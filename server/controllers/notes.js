@@ -60,7 +60,7 @@ export const deleteNote = async (req, res) => {
       return;
     }
 
-    if (note.type === 'PROJECT') {
+    if (note.kind === 'PROJECT') {
       const project = await Project.findOne({ _id: note.parent });
       if (!project) {
         console.log('project not found');

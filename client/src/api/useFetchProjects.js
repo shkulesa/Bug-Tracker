@@ -1,7 +1,7 @@
 // useFetchProjects.js
 import { useDispatch } from 'react-redux';
 import { API_BASE_URL } from '../config';
-import { setProjects } from 'state/slices/userSlice';
+import { setManagedProjects, setProjects } from 'state/slices/userSlice';
 
 const useFetchProjects = () => {
   const dispatch = useDispatch();
@@ -49,7 +49,7 @@ const useFetchProjects = () => {
     }
 
     //update state
-    dispatch(setProjects({ projects: managedProjects }));
+    dispatch(setManagedProjects({ managedProjects: managedProjects }));
   };
 
   return { fetchProjects, fetchManagedProjects };

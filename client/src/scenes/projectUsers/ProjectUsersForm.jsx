@@ -1,51 +1,40 @@
-import { Box, Button, FormControl, InputLabel, MenuItem, Paper, Select, Typography, useTheme } from '@mui/material';
+import { Box, Button, FormControl, InputLabel, MenuItem, Paper, Select, useTheme } from '@mui/material';
 import FlexBetween from 'components/FlexBetween';
 import Header from 'components/Header';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import ProjectUsersTable from './ProjectUsersTable';
-import { setEditProject, setEditProjectUser, setEditTeam } from 'state/slices/editSlice';
-import { setUsers, updateProjects } from 'state/slices/userSlice';
+import { setEditProject } from 'state/slices/editSlice';
+import useFetchProjectInfo from 'api/useFetchProjectInfo';
+import useFetchUsers from 'api/useFetchUsers';
 
-const ProjectUsersForm = ({ linkToProject = true }) => {
+const ProjectUsersForm = ({ linkToProject }) => {
   const { palette } = useTheme();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const user = useSelector((state) => state.user.user);
   const users = useSelector((state) => state.user.users);
   const token = useSelector((state) => state.user.token);
-  const project = useSelector((state) => state.edit.project);
-  const team = useSelector((state) => state.edit.team);
-  const [projectUserId, setProjectUserId] = useState('-CHOOSE A USER-');
+  //project, to be edited
+  const editProject = useSelector((state) => state.edit.project);
+  //team, to be edited
+  const editTeam = useSelector((state) => state.edit.team);
+
+  //selected user
+  const [projectUserId, setProjectUserId] = useState('');
+
+  //selected project
   const [currentProject, setCurrentProject] = useState(null);
   const [currentTeam, setCurrentTeam] = useState(null);
   const [isManager, setIsManager] = useState(false);
+  //is selected user in team
   const [isIncluded, setIsIncluded] = useState(false);
-  const apiURL = process.env.REACT_APP_API_BASE_URL;
+  const { fetchTeamMembersForEdit, toggleProjectMember, toggleProjectManager } = useFetchProjectInfo();
+  const fetchUsers = useFetchUsers();
 
   const values = {
-    projectUserId: projectUserId,
-  };
-
-  const getUsers = async () => {
-    const response = await fetch(`${apiURL}/users/all`, {
-      method: 'GET',
-      headers: { Authorization: `Bearer ${token}` },
-    });
-
-    const users = await response.json();
-    dispatch(setUsers({ users: users }));
-  };
-
-  const getTeamMembers = async (projectId) => {
-    const response = await fetch(`${apiURL}/projects/${projectId}/team`, {
-      method: 'GET',
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    const team = await response.json();
-
-    dispatch(setEditTeam({ team: team }));
+    projectUserId,
   };
 
   const handleChange = (event) => {
@@ -53,84 +42,54 @@ const ProjectUsersForm = ({ linkToProject = true }) => {
   };
 
   const toggleMember = async () => {
-    if (projectUserId && currentProject && projectUserId !== '-CHOOSE A USER-') {
-      const response = await fetch(`${apiURL}/projects/${currentProject._id}/team`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-        body: JSON.stringify(values),
-      });
-      const updatedProject = await response.json();
-      dispatch(
-        updateProjects({
-          updatedProject: updatedProject.project,
-        })
-      );
-      dispatch(
-        setEditProject({
-          editProject: updatedProject.project,
-        })
-      );
-      dispatch(
-        setEditProjectUser({
-          projectUser: updatedProject.user,
-        })
-      );
+    if (projectUserId && currentProject) {
+      const updatedProject = await toggleProjectMember(values, editProject._id, token);
 
       setCurrentProject(updatedProject.project);
       setCurrentTeam(updatedProject.project.team);
-      getTeamMembers(updatedProject.project._id);
+      console.log(editTeam);
+      fetchTeamMembersForEdit(updatedProject.project._id, token);
     }
   };
 
   const toggleManager = async () => {
-    if (projectUserId && currentProject && projectUserId !== '-CHOOSE A USER-') {
-      const response = await fetch(`${apiURL}/projects/${currentProject._id}/managers`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-        body: JSON.stringify(values),
-      });
-      const updatedProject = await response.json();
-      dispatch(
-        updateProjects({
-          updatedProject: updatedProject,
-        })
-      );
-      dispatch(
-        setEditProject({
-          editProject: updatedProject,
-        })
-      );
+    if (projectUserId && currentProject) {
+      const updatedProject = await toggleProjectManager(values, editProject._id, token);
       setCurrentProject(updatedProject);
     }
   };
 
   useEffect(() => {
-    getUsers();
-
-    if (linkToProject && project) {
-      setCurrentProject(project);
-      setCurrentTeam(project.team);
+    //form loaded, generate users
+    fetchUsers(token);
+    //if a coming from projectInfo page
+    if (linkToProject && editProject) {
+      setCurrentProject(editProject);
+      setCurrentTeam(editProject.team);
     } else {
       setCurrentProject(null);
       setCurrentTeam(null);
+      dispatch(setEditProject({ editProject: null }));
     }
   }, []);
 
+  //update table to reflect projectUser's manager status
   useEffect(() => {
-    if (!currentProject || !currentTeam) return;
+    if (!currentProject || !currentTeam || !projectUserId) return;
 
     setIsIncluded(currentTeam.includes(projectUserId));
     setIsManager(currentProject.managers.includes(projectUserId));
   }, [currentProject, currentTeam, projectUserId, toggleMember]);
 
+  //reset projectUserId when editProject or editTeam are changed
   useEffect(() => {
-    setProjectUserId('-CHOOSE A USER-');
+    setProjectUserId('');
 
-    if (project) {
-      setCurrentProject(project);
-      setCurrentTeam(project.team);
+    if (editProject) {
+      setCurrentProject(editProject);
+      setCurrentTeam(editProject.team);
     }
-  }, [project, team]);
+  }, [editProject, editTeam]);
 
   return (
     <Paper sx={{ height: '100%', backgroundColor: palette.background.main }}>
@@ -179,8 +138,8 @@ const ProjectUsersForm = ({ linkToProject = true }) => {
               borderBottom={`1px solid ${palette.neutral.medium}`}
             >
               <ProjectUsersTable
-                team={team}
-                project={currentProject}
+                editTeam={editTeam}
+                editProject={currentProject}
               />
             </Box>
             {/* <Typography
@@ -191,14 +150,18 @@ const ProjectUsersForm = ({ linkToProject = true }) => {
               Select a User:
             </Typography> */}
             <FormControl fullWidth>
-              <InputLabel id='user-label'>User</InputLabel>
+              <InputLabel id='user-label'>Select User</InputLabel>
               <Select
                 labelId='user-label'
-                label='User'
+                label='Select User'
+                id='user'
+                autoWidth
                 value={projectUserId}
                 onChange={handleChange}
               >
-                <MenuItem value={'-CHOOSE A USER-'}>-CHOOSE A USER-</MenuItem>
+                <MenuItem value=''>
+                  <em>Select User</em>
+                </MenuItem>
                 {users.map((user) => {
                   return (
                     <MenuItem
@@ -211,7 +174,7 @@ const ProjectUsersForm = ({ linkToProject = true }) => {
                 })}
               </Select>
             </FormControl>
-            {projectUserId !== '-CHOOSE A USER-' && (
+            {projectUserId && (
               <Box
                 p='0rem 4rem'
                 justifyContent='space-around'
@@ -221,7 +184,7 @@ const ProjectUsersForm = ({ linkToProject = true }) => {
               >
                 <Box textAlign='center'>
                   <Button
-                    disabled={user.role === 'VIEWER' || projectUserId === '-CHOOSE A USER-'}
+                    disabled={user.role === 'VIEWER' || !projectUserId}
                     onClick={toggleMember}
                     variant='outlined'
                     sx={{
@@ -242,7 +205,7 @@ const ProjectUsersForm = ({ linkToProject = true }) => {
                 {isIncluded && (
                   <Box textAlign='center'>
                     <Button
-                      disabled={user.role === 'VIEWER' || projectUserId === '-CHOOSE A USER-'}
+                      disabled={user.role === 'VIEWER' || !projectUserId}
                       onClick={toggleManager}
                       variant='outlined'
                       sx={{

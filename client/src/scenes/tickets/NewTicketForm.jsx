@@ -3,10 +3,12 @@ import { Box, Button, TextField, useTheme, Select, MenuItem, InputLabel, FormCon
 import { Formik } from 'formik';
 import * as yup from 'yup';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { setProjects, setUsers } from 'state';
+import { useSelector } from 'react-redux';
 import FlexBetween from 'components/FlexBetween';
 import Header from 'components/Header';
+import useFetchTicketInfo from 'api/useFetchTicketInfo';
+import useFetchUsers from 'api/useFetchUsers';
+import useFetchProjects from 'api/useFetchProjects';
 
 const ticketSchema = yup.object().shape({
   title: yup.string().required('required'),
@@ -28,7 +30,6 @@ const ticketSchema = yup.object().shape({
 
 const NewTicketForm = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
   const { palette } = useTheme();
   const users = useSelector((state) => state.user.users);
   const projects = useSelector((state) => state.user.projects);
@@ -36,7 +37,9 @@ const NewTicketForm = () => {
   const user = useSelector((state) => state.user.user);
   const { projectId } = useParams();
   const hasProject = projectId !== undefined && projectId !== 'none';
-  const apiURL = process.env.REACT_APP_API_BASE_URL;
+  const { createTicket } = useFetchTicketInfo();
+  const fetchUsers = useFetchUsers();
+  const { fetchProjects } = useFetchProjects();
 
   const initialValues = {
     title: '',
@@ -49,20 +52,6 @@ const NewTicketForm = () => {
     assignedUser: '',
   };
 
-  const createTicket = async (values, onSubmitProps) => {
-    const response = await fetch(`${apiURL}/tickets/create`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-      body: JSON.stringify(values),
-    });
-
-    const newTicket = await response.json();
-    if (newTicket) {
-      onSubmitProps.resetForm();
-      navigate(hasProject ? `/projects/info/${projectId}` : `/tickets/info/${newTicket}`);
-    }
-  };
-
   const handleFormSubmit = async (values, onSubmitProps) => {
     const finalValues = JSON.parse(JSON.stringify(values));
     console.log(finalValues);
@@ -72,34 +61,16 @@ const NewTicketForm = () => {
 
     delete finalValues.assignedUser;
 
-    await createTicket(finalValues, onSubmitProps);
-  };
-
-  const getUsers = async () => {
-    const response = await fetch(`${apiURL}/users/all`, {
-      method: 'GET',
-      headers: { Authorization: `Bearer ${token}` },
-    });
-
-    const users = await response.json();
-    dispatch(setUsers({ users: users }));
-  };
-
-  const getProjects = async () => {
-    const url = `${apiURL}/projects/all`;
-
-    const response = await fetch(url, {
-      method: 'GET',
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    const userProjects = await response.json();
-
-    dispatch(setProjects({ projects: userProjects }));
+    const newTicketId = await createTicket(finalValues, token);
+    if (newTicketId) {
+      onSubmitProps.resetForm();
+      navigate(hasProject ? `/projects/info/${projectId}` : `/tickets/info/${newTicketId}`);
+    }
   };
 
   useEffect(() => {
-    getUsers();
-    getProjects();
+    fetchUsers(token);
+    fetchProjects(user, token);
   }, []);
 
   return (

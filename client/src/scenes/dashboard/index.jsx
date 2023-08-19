@@ -1,18 +1,18 @@
 import { Box, Button, Paper, Typography, useTheme } from '@mui/material';
+import useFetchProjects from 'api/useFetchProjects';
+import useFetchTickets from 'api/useFetchTickets';
 import PieChart from 'components/charts/PieChart';
 import FlexBetween from 'components/FlexBetween';
 import Header from 'components/Header';
 import React, { useState } from 'react';
 import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import ProjectsTable from 'scenes/projects/ProjectsTable';
 import TicketsTable from 'scenes/tickets/TicketsTable';
-import { setProjects, setTickets } from 'state';
 
 const Dashboard = () => {
   const { palette } = useTheme();
-  const dispatch = useDispatch();
   const navigate = useNavigate();
   const user = useSelector((state) => state.user.user);
   const token = useSelector((state) => state.user.token);
@@ -21,7 +21,8 @@ const Dashboard = () => {
   const [statusTicketData, setStatusTicketData] = useState([]);
   const [categoryTicketData, setCategoryTicketData] = useState([]);
   const [priorityProjectData, setPriorityProjectData] = useState([]);
-  const apiURL = process.env.REACT_APP_API_BASE_URL;
+  const { fetchProjects } = useFetchProjects();
+  const fetchTickets = useFetchTickets();
 
   const computeTicketData = (tickets) => {
     console.log(tickets);
@@ -132,47 +133,13 @@ const Dashboard = () => {
     setPriorityProjectData(priorityData);
   };
 
-  const getTickets = async () => {
-    const url = user.role !== 'DEVELOPER' ? `${apiURL}/tickets/all` : `${apiURL}/users/${user._id}/tickets`;
-
-    const response = await fetch(url, {
-      method: 'GET',
-      headers: { Authorization: `Bearer ${token}` },
-    });
-
-    let userTickets;
-    if (user.role === 'SUBMITTER') {
-      const allTickets = response.status === 404 ? [] : await response.json();
-      userTickets = allTickets.filter((ticket) => ticket.submitter === user._id);
-    } else {
-      userTickets = response.status === 404 ? [] : await response.json();
-    }
-
-    dispatch(setTickets({ tickets: userTickets }));
-    computeTicketData(userTickets);
-  };
-
-  const getProjects = async () => {
-    const url =
-      user.role === 'ADMIN' || user.role === 'VIEWER'
-        ? `${apiURL}/projects/all`
-        : `${apiURL}/users/${user._id}/projects`;
-
-    const response = await fetch(url, {
-      method: 'GET',
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    const userProjects = await response.json();
-
-    console.log(userProjects);
-
-    dispatch(setProjects({ projects: userProjects }));
-    computeProjectData(userProjects);
-  };
-
   useEffect(() => {
-    getTickets();
-    getProjects();
+    fetchTickets(user, token).then(() => {
+      computeTicketData(tickets);
+    });
+    fetchProjects(user, token).then(() => {
+      computeProjectData(projects);
+    });
   }, []);
 
   return (

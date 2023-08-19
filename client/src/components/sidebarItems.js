@@ -99,12 +99,6 @@ export const SidebarItems = {
       path: '/manage-users/none',
       access: ['ADMIN', 'VIEWER'],
     },
-    // {
-    //   text: 'User Roles',
-    //   icon: <AdminPanelSettingsOutlinedIcon />,
-    //   path: '/manage-roles',
-    //   access: ['ADMIN', 'VIEWER'],
-    // },
     {
       text: 'Account',
       icon: null,
@@ -187,12 +181,6 @@ export const SidebarItems = {
       path: '/manage-users/none',
       access: ['ADMIN', 'VIEWER'],
     },
-    // {
-    //   text: 'User Roles',
-    //   icon: <AdminPanelSettingsOutlinedIcon />,
-    //   path: '/manage-roles',
-    //   access: ['ADMIN', 'VIEWER'],
-    // },
     {
       text: 'Account',
       icon: null,

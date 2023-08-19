@@ -13,18 +13,18 @@ import useFetchProjects from 'api/useFetchProjects';
 import useFetchProjectInfo from 'api/useFetchProjectInfo';
 import { setEditProject, setEditTeam } from 'state/slices/editSlice';
 
-const ProjectsTable = ({ page, project }) => {
+const ProjectsTable = ({ page }) => {
   const theme = useTheme();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const token = useSelector((state) => state.user.token);
   const user = useSelector((state) => state.user.user);
   const projects = useSelector((state) => state.user.projects);
+  const managedProjects = useSelector((state) => state.user.managedProjects);
   const editProject = useSelector((state) => state.edit.project);
   const [isLoading, setIsLoading] = useState(true);
-  const apiURL = process.env.REACT_APP_API_BASE_URL;
   const { fetchProjects, fetchManagedProjects } = useFetchProjects();
-  const fetchTeamMembers = useFetchProjectInfo();
+  const { fetchTeamMembersForEdit } = useFetchProjectInfo();
 
   const priorityComparator = (a, b) => {
     const priorities = { LOW: 0, MEDIUM: 1, HIGH: 2 };
@@ -202,28 +202,6 @@ const ProjectsTable = ({ page, project }) => {
           },
         ];
 
-  // const getProjects = async () => {
-  //   const url =
-  //     user.role === 'ADMIN' || user.role === 'VIEWER'
-  //       ? `${apiURL}/projects/all`
-  //       : `${apiURL}/users/${user._id}/projects`;
-
-  //   const response = await fetch(url, {
-  //     method: 'GET',
-  //     headers: { Authorization: `Bearer ${token}` },
-  //   });
-
-  //   let userProjects;
-  //   if (page === 'USERS' && user.role === 'DEVELOPER') {
-  //     const allProjects = response.status === 404 ? [] : await response.json();
-  //     userProjects = allProjects.filter(({ managers }) => managers.includes(user._id));
-  //   } else {
-  //     userProjects = response.status === 404 ? [] : await response.json();
-  //   }
-
-  //   dispatch(setProjects({ projects: userProjects }));
-  // };
-
   useEffect(() => {
     //update state with appropriate projects
     if (page === 'PROJECTS' || page === 'DASHBOARD') {
@@ -233,7 +211,7 @@ const ProjectsTable = ({ page, project }) => {
     }
 
     setIsLoading(false);
-    if (!project) {
+    if (!editProject) {
       dispatch(
         setEditProject({
           editProject: null,
@@ -247,17 +225,6 @@ const ProjectsTable = ({ page, project }) => {
     }
   }, []);
 
-  //Project Users Logic
-  // const getTeamMembers = async (projectId) => {
-  //   const response = await fetch(`${apiURL}/projects/${projectId}/team`, {
-  //     method: 'GET',
-  //     headers: { Authorization: `Bearer ${token}` },
-  //   });
-  //   const team = await response.json();
-
-  //   dispatch(setProjectTeam({ team: team }));
-  // };
-
   const handleEditProjectUsers = (editProject) => {
     dispatch(
       setEditProject({
@@ -265,7 +232,7 @@ const ProjectsTable = ({ page, project }) => {
       })
     );
     console.log(editProject._id);
-    fetchTeamMembers(editProject._id, token);
+    fetchTeamMembersForEdit(editProject._id, token);
   };
 
   return (
@@ -281,7 +248,7 @@ const ProjectsTable = ({ page, project }) => {
           },
         }}
         getRowId={(row) => row._id}
-        rows={projects || []}
+        rows={page === 'USERS' ? managedProjects : projects || []}
         columns={columns}
         density={(!page === 'DASHBOARD' && projects && projects.length) > 5 ? 'compact' : 'standard'}
         components={{ Toolbar: CustomGridToolbar }}

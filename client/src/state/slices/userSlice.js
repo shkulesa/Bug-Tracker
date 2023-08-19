@@ -40,7 +40,7 @@ const userSlice = createSlice({
     },
 
     //update
-    updateProjects: (state, action) => {
+    updateManagedProjects: (state, action) => {
       const updatedProjects = state.projects.map((project) => {
         if (project._id !== action.payload.updatedProject) {
           return project;
@@ -48,12 +48,20 @@ const userSlice = createSlice({
           return action.payload.updatedProject;
         }
       });
-      state.projects = updatedProjects;
+      state.managedProjects = updatedProjects;
     },
   },
 });
 
-export const { setMode, setLogin, setLogout, setUsers, setTickets, setProjects, setManagedProjects, updateProjects } =
-  userSlice.actions;
+export const {
+  setMode,
+  setLogin,
+  setLogout,
+  setUsers,
+  setTickets,
+  setProjects,
+  setManagedProjects,
+  updateManagedProjects,
+} = userSlice.actions;
 
 export default userSlice.reducer;

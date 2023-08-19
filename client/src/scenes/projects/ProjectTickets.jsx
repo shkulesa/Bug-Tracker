@@ -6,7 +6,6 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import ConstructionOutlinedIcon from '@mui/icons-material/ConstructionOutlined';
 import DoneOutlineOutlinedIcon from '@mui/icons-material/DoneOutlineOutlined';
 import { useNavigate } from 'react-router-dom';
-import { Palette } from '@mui/icons-material';
 
 const ProjectTickets = ({ tickets }) => {
   const { palette } = useTheme();
@@ -100,8 +99,6 @@ const ProjectTickets = ({ tickets }) => {
             <IconButton
               variant='outlined'
               onClick={() => {
-                // console.log('TICKET: ');
-                // console.log(ticket);
                 navigate(`/tickets/info/${ticket._id}`);
               }}
             >

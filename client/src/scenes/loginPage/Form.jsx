@@ -42,7 +42,6 @@ const Form = () => {
   const isNonMobile = useMediaQuery('(min-width:600px)');
   const isLogin = pageType === 'LOGIN';
   const isRegister = pageType === 'REGISTER';
-  // const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
   const demoLogin = () => {
     const demoValues = { email: 'demoViewer@email.com', password: 'viewer' };
@@ -176,7 +175,6 @@ const Form = () => {
                   resetForm();
                 }}
                 sx={{
-                  textDecoration: 'underline',
                   color: palette.primary.main,
                   '&:hover': { cursor: 'pointer', color: palette.primary.light },
                 }}
