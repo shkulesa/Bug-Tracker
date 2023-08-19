@@ -4,9 +4,10 @@ import { Formik } from 'formik';
 import * as yup from 'yup';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { setLogin } from 'state';
 import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
 import CheckCircleOutlinedIcon from '@mui/icons-material/CheckCircleOutlined';
+import { setLogin } from 'state/slices/userSlice';
+import { API_BASE_URL } from 'config';
 
 const registerSchema = yup.object().shape({
   firstName: yup.string().required('required'),
@@ -41,7 +42,6 @@ const Form = () => {
   const isNonMobile = useMediaQuery('(min-width:600px)');
   const isLogin = pageType === 'LOGIN';
   const isRegister = pageType === 'REGISTER';
-  const apiURL = process.env.REACT_APP_API_BASE_URL;
 
   const demoLogin = () => {
     const demoValues = { email: 'demoViewer@email.com', password: 'viewer' };
@@ -54,7 +54,7 @@ const Form = () => {
   };
 
   const login = async (values, onSubmitProps) => {
-    const loginResponse = await fetch(`${apiURL}/auth/login`, {
+    const loginResponse = await fetch(`${API_BASE_URL}/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(values),
@@ -69,7 +69,7 @@ const Form = () => {
   };
 
   const register = async (values, onSubmitProps) => {
-    const savedUserResponse = await fetch(`${apiURL}/auth/register`, {
+    const savedUserResponse = await fetch(`${API_BASE_URL}/auth/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(values),
@@ -82,7 +82,7 @@ const Form = () => {
   };
 
   const pingBackend = async () => {
-    const response = await fetch(apiURL, { mode: 'no-cors' });
+    const response = await fetch(API_BASE_URL, { mode: 'no-cors' });
     console.log('Pinged backend. Waiting on response...');
     if (response.status === 0) {
       setConnectionStatus('Connected');
@@ -175,7 +175,6 @@ const Form = () => {
                   resetForm();
                 }}
                 sx={{
-                  textDecoration: 'underline',
                   color: palette.primary.main,
                   '&:hover': { cursor: 'pointer', color: palette.primary.light },
                 }}

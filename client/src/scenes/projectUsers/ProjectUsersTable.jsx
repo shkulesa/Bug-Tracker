@@ -1,26 +1,17 @@
-import { Box, Paper, Typography, useTheme } from '@mui/material';
+import { Box, Typography, useTheme } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
-import CustomGridToolbar from 'components/CustomGridToolbar';
 import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { setProjectTeam } from 'state';
 import AdminPanelSettingsOutlinedIcon from '@mui/icons-material/AdminPanelSettingsOutlined';
 import ManageAccountsOutlinedIcon from '@mui/icons-material/ManageAccountsOutlined';
 import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
 
-const ProjectUsersTable = ({ team, project }) => {
+const ProjectUsersTable = ({ editTeam, editProject }) => {
   const { palette } = useTheme();
   const [managers, setManagers] = useState([]);
-  // const { team, managers } = useSelector((state) => state.editProject);
-  // const team = useSelector((state) => state.project.team);
-  // const { managers } = useSelector((state) => state.content.project);
-  // console.log(team);
-  // console.log(managers);
-  // console.log(rows)
 
   useEffect(() => {
-    setManagers(project.managers);
-  }, [project, team]);
+    setManagers(editProject.managers);
+  }, [editProject, editTeam]);
 
   const columns = [
     {
@@ -28,7 +19,6 @@ const ProjectUsersTable = ({ team, project }) => {
       headerName: 'Name',
       flex: 1,
       valueGetter: ({ row: { firstName, lastName } }) => {
-        // console.log(row);
         return firstName + ' ' + lastName;
       },
     },
@@ -72,13 +62,12 @@ const ProjectUsersTable = ({ team, project }) => {
 
   return (
     <Box height='100%'>
-      {/* <DataGrid columns={columns} rows={ || []}/> */}
       <DataGrid
         getRowId={(row) => {
           // console.log(row);
           return row._id;
         }}
-        rows={team || []}
+        rows={editTeam || []}
         columns={columns}
         sx={{ m: '0', backgroundColor: palette.background.alt, p: '0' }}
       />

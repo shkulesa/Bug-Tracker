@@ -20,10 +20,10 @@ import EditTicketForm from 'scenes/tickets/EditTicketForm';
 import Account from 'scenes/account';
 
 function App() {
-  const mode = useSelector((state) => state.mode);
+  const mode = useSelector((state) => state.user.mode);
   const theme = useMemo(() => createTheme(themeSettings(mode)), [mode]);
-  const isAuth = useSelector((state) => state.token);
-  const user = useSelector((state) => state.user);
+  const isAuth = useSelector((state) => state.user.token);
+  const user = useSelector((state) => state.user.user);
   return (
     <div className='app'>
       <Router>

@@ -7,7 +7,7 @@ import ProjectsTable from './ProjectsTable';
 const Projects = () => {
   const { palette } = useTheme();
   const navigate = useNavigate();
-  const user = useSelector((state) => state.user);
+  const user = useSelector((state) => state.user.user);
 
   return (
     <Box

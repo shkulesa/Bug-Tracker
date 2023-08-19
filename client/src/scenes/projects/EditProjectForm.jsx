@@ -3,12 +3,12 @@ import { Box, Button, TextField, useTheme, Select, MenuItem, InputLabel, FormCon
 import { Formik } from 'formik';
 import * as yup from 'yup';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { setEditProject } from 'state';
+import { useSelector } from 'react-redux';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import FlexBetween from 'components/FlexBetween';
 import Header from 'components/Header';
+import useFetchProjectInfo from 'api/useFetchProjectInfo';
 
 const projectSchema = yup.object().shape({
   title: yup.string().required('required'),
@@ -18,43 +18,28 @@ const projectSchema = yup.object().shape({
 
 const EditProjectForm = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
   const { palette } = useTheme();
   const { id } = useParams();
-  const token = useSelector((state) => state.token);
-  const project = useSelector((state) => state.editProject);
-  const apiURL = process.env.REACT_APP_API_BASE_URL;
+  const token = useSelector((state) => state.user.token);
+  const editProject = useSelector((state) => state.edit.project);
+  const { fetchProjectForEdit, updateProject } = useFetchProjectInfo();
 
   const initialValues = {
-    title: project.title,
-    description: project.description,
-    priority: project.priority,
+    title: editProject.title,
+    description: editProject.description,
+    priority: editProject.priority,
   };
 
   useEffect(() => {
-    getProject().then(() => {
-      initialValues.startDate = correctDate(project.startDate);
-      initialValues.endDate = correctDate(project.endDate);
+    fetchProjectForEdit(id, token).then(() => {
+      initialValues.startDate = correctDate(editProject.startDate);
+      initialValues.endDate = correctDate(editProject.endDate);
     });
   }, []);
 
   const correctDate = (date) => {
     const hold = new Date(date);
     return new Date(hold.getTime() + hold.getTimezoneOffset() * 60000).toISOString();
-  };
-
-  const updateProject = async (values, onSubmitProps) => {
-    const response = await fetch(`${apiURL}/projects/${project._id}/update`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-      body: JSON.stringify(values),
-    });
-
-    const newProject = await response.json();
-    if (newProject) {
-      onSubmitProps.resetForm();
-      navigate(`/projects/info/${newProject}`);
-    }
   };
 
   const handleFormSubmit = async (values, onSubmitProps) => {
@@ -65,19 +50,9 @@ const EditProjectForm = () => {
     finalValues.endDate = new Date(end.getTime() - end.getTimezoneOffset() * 60000).toISOString().split('T')[0];
     finalValues.startDate = new Date(start.getTime() - start.getTimezoneOffset() * 60000).toISOString().split('T')[0];
 
-    await updateProject(finalValues, onSubmitProps);
-  };
-
-  const getProject = async () => {
-    const response = await fetch(`${apiURL}/projects/${id}`, {
-      method: 'GET',
-      headers: { Authorization: `Bearer ${token}` },
-    });
-
-    const project = await response.json();
-
-    dispatch(setEditProject({ editProject: project }));
-    return project;
+    await updateProject(finalValues, id, token);
+    onSubmitProps.resetForm();
+    navigate(`/projects/info/${id}`);
   };
 
   return (
@@ -89,7 +64,7 @@ const EditProjectForm = () => {
         <Box>
           <Header
             title='Edit Project'
-            subtitle={project.title}
+            subtitle={editProject.title}
           />
         </Box>
         <Box>
@@ -102,7 +77,7 @@ const EditProjectForm = () => {
               '&:hover': { color: palette.primary.main },
             }}
             onClick={() => {
-              navigate(`/projects/info/${project._id}`);
+              navigate(`/projects/info/${editProject._id}`);
             }}
           >
             Project Details

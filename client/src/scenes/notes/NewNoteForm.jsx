@@ -2,7 +2,7 @@ import { Box, Button, TextField, useTheme } from '@mui/material';
 import { Formik } from 'formik';
 import * as yup from 'yup';
 import { useDispatch, useSelector } from 'react-redux';
-import { addNote } from 'state';
+import useFetchNotes from 'api/useFetchNotes';
 
 const noteSchema = yup.object().shape({
   content: yup.string().required('required'),
@@ -11,30 +11,12 @@ const noteSchema = yup.object().shape({
 const NewNoteForm = ({ kind, parent }) => {
   const dispatch = useDispatch();
   const { palette } = useTheme();
-  const token = useSelector((state) => state.token);
-  const user = useSelector((state) => state.user);
-  const apiURL = process.env.REACT_APP_API_BASE_URL;
+  const token = useSelector((state) => state.user.token);
+  const user = useSelector((state) => state.user.user);
+  const { createTicketNote, createProjectNote } = useFetchNotes();
 
   const initialValues = {
     content: '',
-  };
-
-  const createNote = async (values, onSubmitProps) => {
-    if (user.role !== 'VIEWER') {
-      const response = await fetch(`${apiURL}/notes/create`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-        body: JSON.stringify(values),
-      });
-
-      const newNote = await response.json();
-      console.log(newNote);
-      if (newNote) {
-        console.log('!');
-        onSubmitProps.resetForm();
-        dispatch(addNote({ note: newNote }));
-      }
-    }
   };
 
   const handleFormSubmit = async (values, onSubmitProps) => {
@@ -44,7 +26,12 @@ const NewNoteForm = ({ kind, parent }) => {
     values.parentId = parent;
 
     console.log(values);
-    await createNote(values, onSubmitProps);
+    if (kind === 'TICKET') {
+      await createTicketNote(values, user, token);
+    } else {
+      await createProjectNote(values, user, token);
+    }
+    onSubmitProps.resetForm();
   };
 
   return (

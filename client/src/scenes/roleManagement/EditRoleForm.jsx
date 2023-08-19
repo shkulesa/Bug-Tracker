@@ -1,18 +1,19 @@
 import { Box, Button, FormControl, InputLabel, MenuItem, Paper, Select, Typography, useTheme } from '@mui/material';
+import useFetchUserInfo from 'api/useFetchUserInfo';
 import Header from 'components/Header';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { setEditUser, setUsers } from 'state';
+import { setEditUser } from 'state/slices/editSlice';
 
-const ROLES = ['-CHOOSE A ROLE-', 'ADMIN', 'DEVELOPER', 'SUBMITTER'];
+const ROLES = ['ADMIN', 'DEVELOPER', 'SUBMITTER'];
 
 const EditRoleForm = ({ isNonMobile }) => {
   const theme = useTheme();
   const dispatch = useDispatch();
-  const user = useSelector((state) => state.editUser);
-  const token = useSelector((state) => state.token);
-  const [newRole, setNewRole] = useState('-CHOOSE A ROLE-');
-  const apiURL = process.env.REACT_APP_API_BASE_URL;
+  const editUser = useSelector((state) => state.edit.user);
+  const token = useSelector((state) => state.user.token);
+  const [newRole, setNewRole] = useState('');
+  const updateUserRole = useFetchUserInfo();
 
   const values = {
     role: newRole,
@@ -23,20 +24,7 @@ const EditRoleForm = ({ isNonMobile }) => {
   };
 
   const updateRole = async () => {
-    if (newRole && newRole !== '-CHOOSE A ROLE-' && newRole !== user.role) {
-      const response = await fetch(`${apiURL}/users/${user._id}/role`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-        body: JSON.stringify(values),
-      });
-      const updatedUsers = await response.json();
-      console.log(updatedUsers);
-      dispatch(
-        setUsers({
-          users: updatedUsers,
-        })
-      );
-    }
+    await updateUserRole(editUser._id, values, token);
   };
 
   useEffect(() => {
@@ -63,7 +51,7 @@ const EditRoleForm = ({ isNonMobile }) => {
         >
           <Header
             title='EDIT ROLE'
-            subtitle={user ? user.firstName + ' ' + user.lastName : 'No user selected'}
+            subtitle={editUser ? editUser.firstName + ' ' + editUser.lastName : 'No user selected'}
           />
         </Box>
         <Box
@@ -85,6 +73,12 @@ const EditRoleForm = ({ isNonMobile }) => {
               value={newRole}
               onChange={handleChange}
             >
+              {/* <MenuItem
+                    // key={role}
+                    value=''
+                  >
+                    <em>Select a role</em>
+                  </MenuItem> */}
               {ROLES.map((role) => {
                 return (
                   <MenuItem
@@ -98,7 +92,7 @@ const EditRoleForm = ({ isNonMobile }) => {
             </Select>
             <Box textAlign='center'>
               <Button
-                disabled={user === null || newRole === '-CHOOSE A ROLE-'}
+                disabled={editUser === null || newRole === '-CHOOSE A ROLE-'}
                 onClick={updateRole}
                 sx={{
                   width: isNonMobile ? '60%' : '100%',

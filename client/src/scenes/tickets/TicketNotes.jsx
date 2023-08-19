@@ -2,23 +2,13 @@ import { Box, Button } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import CustomGridToolbar from 'components/CustomGridToolbar';
 import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';
-import { removeNote } from 'state';
+import useFetchNotes from 'api/useFetchNotes';
 
 const TicketNotes = ({ notes, isDev }) => {
-  const dispatch = useDispatch();
-  const token = useSelector((state) => state.token);
-  const apiURL = process.env.REACT_APP_API_BASE_URL;
-
-  const deleteNote = async (id) => {
-    const response = await fetch(`${apiURL}/notes/${id}`, {
-      method: 'DELETE',
-      headers: { Authorization: `Bearer ${token}` },
-    });
-
-    if (response.status === 204) dispatch(removeNote({ note: id }));
-  };
+  const token = useSelector((state) => state.user.token);
+  const { deleteNote } = useFetchNotes();
 
   const columns = isDev
     ? [
@@ -50,7 +40,7 @@ const TicketNotes = ({ notes, isDev }) => {
                 <Button
                   variant='outlined'
                   onClick={() => {
-                    deleteNote(_id);
+                    deleteNote(_id, token);
                   }}
                   sx={{
                     color: '#FF7572',

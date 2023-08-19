@@ -16,7 +16,7 @@ export const getUser = async (req, res) => {
 
 export const getAllUsers = async (req, res) => {
   try {
-    const users = await User.find().select('-password');
+    const users = await User.find({ role: { $ne: 'VIEWER' } }).select('_id firstName lastName role');
     res.status(200).json(users);
   } catch (err) {
     res.status(404).json({ msg: err.message });

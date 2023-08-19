@@ -24,10 +24,7 @@ const ProjectUsers = () => {
           width='60%'
         >
           <Paper sx={{ height: '100%' }}>
-            <ProjectsTable
-              page='USERS'
-              project={id}
-            />
+            <ProjectsTable page='USERS' />
           </Paper>
         </Box>
         <Box

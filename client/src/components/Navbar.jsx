@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import { LightModeOutlined, DarkModeOutlined, Menu as MenuIcon, ArrowDropDownOutlined } from '@mui/icons-material';
 import FlexBetween from 'components/FlexBetween';
 import { useDispatch } from 'react-redux';
-import { setLogout, setMode } from 'state';
 import profileImage from 'assets/user.png';
 import { AppBar, Button, Box, Typography, IconButton, Toolbar, Menu, MenuItem, useTheme } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import { setLogout, setMode } from 'state/slices/userSlice';
 
 const Navbar = ({ isSidebarOpen, setIsSidebarOpen, user }) => {
   const dispatch = useDispatch();

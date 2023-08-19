@@ -8,7 +8,7 @@ import { useSelector } from 'react-redux';
 const Layout = () => {
   const isNonMobile = useMediaQuery('(min-width: 600px)');
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const user = useSelector((state) => state.user);
+  const user = useSelector((state) => state.user.user);
 
   return (
     <Box

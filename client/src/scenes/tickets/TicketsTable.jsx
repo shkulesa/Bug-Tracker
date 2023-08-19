@@ -1,24 +1,22 @@
 import { Box, IconButton, Typography, useTheme } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
-import { useDispatch, useSelector } from 'react-redux';
-import { setTickets } from 'state';
+import { useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 import CustomGridToolbar from 'components/CustomGridToolbar';
-
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import ConstructionOutlinedIcon from '@mui/icons-material/ConstructionOutlined';
 import DoneOutlineOutlinedIcon from '@mui/icons-material/DoneOutlineOutlined';
 import { useNavigate } from 'react-router-dom';
+import useFetchTickets from 'api/useFetchTickets';
 
 const TicketsTable = ({ isDashboard = false }) => {
   const { palette } = useTheme();
-  const dispatch = useDispatch();
   const navigate = useNavigate();
-  const token = useSelector((state) => state.token);
-  const user = useSelector((state) => state.user);
-  const tickets = useSelector((state) => state.content.tickets);
+  const token = useSelector((state) => state.user.token);
+  const user = useSelector((state) => state.user.user);
+  const tickets = useSelector((state) => state.user.tickets);
   const [isLoading, setIsLoading] = useState(true);
-  const apiURL = process.env.REACT_APP_API_BASE_URL;
+  const fetchTickets = useFetchTickets();
 
   const columns = isDashboard
     ? [
@@ -227,27 +225,8 @@ const TicketsTable = ({ isDashboard = false }) => {
         },
       ];
 
-  const getTickets = async () => {
-    const url = user.role !== 'DEVELOPER' ? `${apiURL}/tickets/all` : `${apiURL}/users/${user._id}/tickets`;
-
-    const response = await fetch(url, {
-      method: 'GET',
-      headers: { Authorization: `Bearer ${token}` },
-    });
-
-    let userTickets;
-    if (user.role === 'SUBMITTER') {
-      const allTickets = response.status === 404 ? [] : await response.json();
-      userTickets = allTickets.filter((ticket) => ticket.submitter === user._id);
-    } else {
-      userTickets = response.status === 404 ? [] : await response.json();
-    }
-
-    dispatch(setTickets({ tickets: userTickets }));
-  };
-
   useEffect(() => {
-    getTickets().then(() => {
+    fetchTickets(user, token).then(() => {
       setIsLoading(false);
     });
   }, []);
