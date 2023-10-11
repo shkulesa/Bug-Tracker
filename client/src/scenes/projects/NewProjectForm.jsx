@@ -27,7 +27,7 @@ const NewProjectForm = () => {
   const users = useSelector((state) => state.user.users);
   const token = useSelector((state) => state.user.token);
   const user = useSelector((state) => state.user.user);
-  const fetchUsers = useFetchUsers;
+  const fetchUsers = useFetchUsers();
   const { createProject } = useFetchProjectInfo();
 
   const initialValues = {
